@@ -1,0 +1,7 @@
+{
+    "name": "dns-playground",
+    "dependencies": {
+        "SymatemJS": "git+https://github.com/Symatem/SymatemJS.git",
+        "dnsz": "^1.1.5"
+    }
+}
