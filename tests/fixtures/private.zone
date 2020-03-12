@@ -1,0 +1,13 @@
+@                  1800  IN  SOA private.net. private.net. (
+                                           2     ; Seriennummer
+                                           300   ; Refresh Time
+                                           100   ; Retry Time
+                                           6000  ; Expire Time
+                                           600   ; negative Caching Zeit
+                                          )
+@                  1800  IN  NS     private.
+@                  1800  IN  A      192.168.64.2
+xhyve2.private.    1800  IN  A      192.168.64.2
+xhyve3.private.    1800  IN  A      192.168.64.3
+xhyve4.private.    1800  IN  A      192.168.64.4
+
