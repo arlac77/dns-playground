@@ -1,10 +1,11 @@
 import fs from "fs";
 import  dnsz from "dnsz";
-import {Utils, SymbolInternals, SymbolMap, BasicBackend, Diff, RustWasmBackend} from "SymatemJS";
-
+import {loaded, Utils, SymbolInternals, SymbolMap, BasicBackend, Diff, RustWasmBackend} from "SymatemJS";
 
 
 async function doit() {
+    await loaded;
+
     const backend = new RustWasmBackend();
     backend.initPredefinedSymbols();
 
