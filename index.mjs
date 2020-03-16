@@ -1,9 +1,11 @@
 import fs from "fs";
+import { join } from "path";
 import dnsz from "dnsz";
-import {
-  loaded,
-  RustWasmBackend
-} from "SymatemJS";
+import { loaded, Diff, RustWasmBackend } from "SymatemJS";
+
+const repositoryNamespace = 4,
+  recordingNamespace = 5,
+  modalNamespace = 6;
 
 async function doit() {
   await loaded;
@@ -11,13 +13,26 @@ async function doit() {
   const backend = new RustWasmBackend();
   backend.initPredefinedSymbols();
 
-  const source = backend.createSymbol(4);
+  const outDiff = new Diff(
+    backend,
+    { [recordingNamespace]: modalNamespace },
+    repositoryNamespace
+  );
 
-  const buffer =new ArrayBuffer(4);
+  const source = outDiff.createSymbol(4);
+
+  const buffer = new ArrayBuffer(4);
   const view = new Int32Array(buffer);
   view[0] = 127;
 
-  backend.writeData(source, 0, 32, buffer);
+  outDiff.writeData(source, 0, 32, buffer);
+
+  outDiff.compressData();
+  outDiff.commit();
+
+  const fileContent = outDiff.encodeJson();
+ // console.log(fileContent);
+  await fs.promises.writeFile(join("/tmp", "001.json"), fileContent, { encoding: 'utf8' });
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
@@ -25,7 +40,7 @@ async function doit() {
     })
   );
 
-  console.log(data);
+  //console.log(data);
 }
 
 doit();
