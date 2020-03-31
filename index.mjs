@@ -41,8 +41,8 @@ async function doit() {
       writer.setTriple([a, has, name], true);
     });
 
-    writer.compressData();
-    writer.commit();
+  writer.compressData();
+  writer.commit();
 
   const fileContent = writer.encodeJson();
   console.log(fileContent);
