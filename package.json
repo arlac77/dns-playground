@@ -3,5 +3,8 @@
     "dependencies": {
         "SymatemJS": "git+https://github.com/Symatem/SymatemJS.git",
         "dnsz": "^1.1.5"
+    },
+    "engines": {
+        "node" : ">=13.12"
     }
 }

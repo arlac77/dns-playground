@@ -10,16 +10,17 @@ const repositoryNamespace = 4,
 async function doit() {
   await loaded;
 
-  const backend = new RustWasmBackend();
-  backend.initPredefinedSymbols();
+  const rootNS = new RustWasmBackend();
+  rootNS.initPredefinedSymbols();
 
   const outDiff = new Diff(
-    backend,
+    rootNS,
     { [recordingNamespace]: modalNamespace },
     repositoryNamespace
   );
 
   const source = outDiff.createSymbol(4);
+  const source2 = outDiff.createSymbol(4);
 
   const buffer = new ArrayBuffer(4);
   const view = new Int32Array(buffer);
@@ -31,8 +32,8 @@ async function doit() {
   outDiff.commit();
 
   const fileContent = outDiff.encodeJson();
- // console.log(fileContent);
-  await fs.promises.writeFile(join("/tmp", "001.json"), fileContent, { encoding: 'utf8' });
+  console.log(fileContent);
+ // await fs.promises.writeFile(join("/tmp", "001.json"), fileContent, { encoding: 'utf8' });
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
@@ -40,7 +41,7 @@ async function doit() {
     })
   );
 
-  //console.log(data);
+ // console.log(data);
 }
 
 doit();
