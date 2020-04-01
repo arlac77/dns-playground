@@ -1,25 +1,33 @@
 import fs from "fs";
 import { join } from "path";
 import dnsz from "dnsz";
-import { loaded, Diff, RustWasmBackend } from "SymatemJS";
+import { loaded, Diff, SymbolInternals, BasicBackend, RustWasmBackend } from "SymatemJS";
 
+/*
 const repositoryNamespace = 4,
   recordingNamespace = 5,
   modalNamespace = 6;
+*/
 
 async function doit() {
   await loaded;
 
-  const rootNS = new RustWasmBackend();
-  rootNS.initPredefinedSymbols();
+  const backend = new RustWasmBackend();
+
+  backend.initPredefinedSymbols();
+
+  const repositoryNamespace = SymbolInternals.identityOfSymbol(backend.createSymbol(BasicBackend.metaNamespaceIdentity));
+  const modalNamespace = SymbolInternals.identityOfSymbol(backend.createSymbol(BasicBackend.metaNamespaceIdentity));
+  const recordingNamespace = SymbolInternals.identityOfSymbol(backend.createSymbol(BasicBackend.metaNamespaceIdentity));
+
 
   const writer = new Diff(
-    rootNS,
+    backend,
     { [recordingNamespace]: modalNamespace },
     repositoryNamespace
   );
 
-  const ns = 4;
+  const ns = recordingNamespace;
   const has = writer.createSymbol(ns);
   writer.setData(has, "has");
 
