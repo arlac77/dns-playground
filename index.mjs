@@ -3,12 +3,6 @@ import { join } from "path";
 import dnsz from "dnsz";
 import { loaded, Diff, SymbolInternals, BasicBackend, RustWasmBackend } from "SymatemJS";
 
-/*
-const repositoryNamespace = 4,
-  recordingNamespace = 5,
-  modalNamespace = 6;
-*/
-
 async function doit() {
   await loaded;
 
@@ -27,8 +21,7 @@ async function doit() {
     repositoryNamespace
   );
 
-  const ns = recordingNamespace;
-  const has = writer.createSymbol(ns);
+  const has = writer.createSymbol(recordingNamespace);
   writer.setData(has, "has");
 
   const data = dnsz.parse(
@@ -37,7 +30,7 @@ async function doit() {
     })
   );
 
-  readZone(data.records, writer, has, ns);
+  readZone(data.records, writer, has, recordingNamespace);
 
   writer.compressData();
   writer.commit();
