@@ -21,8 +21,10 @@ async function doit() {
     repositoryNamespace
   );
 
-  const has = writer.createSymbol(recordingNamespace);
-  writer.setData(has, "has");
+  const { has, isa, ipv4, name } = ["has", "isa", "ipv4", "name"].map(name => {
+    const symbol = writer.createSymbol(recordingNamespace);
+    writer.setData(symbol, name);
+    return symbol; });
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
@@ -30,7 +32,7 @@ async function doit() {
     })
   );
 
-  readZone(data.records, writer, has, recordingNamespace);
+  readZone(data.records, writer, has, isa, recordingNamespace);
 
   writer.compressData();
   writer.commit();
@@ -40,24 +42,26 @@ async function doit() {
   // await fs.promises.writeFile(join("/tmp", "001.json"), fileContent, { encoding: 'utf8' });
 }
 
-function readZone(records, writer, has, ns) {
+function readZone(records, writer, has, isa, ipv4, name, ns) {
   records
     .filter(record => record.type === "A")
     .forEach(record => {
       const a = writer.createSymbol(ns);
       writer.setData(a, record.content);
 
-      const name = writer.createSymbol(ns);
+      const n = writer.createSymbol(ns);
       writer.setData(name, record.name);
 
-      writer.setTriple([a, has, name], true);
+      writer.setTriple([n, isa, name], true);
+      writer.setTriple([a, isa, ipv4], true);
+      writer.setTriple([a, has, n], true);
     });
 }
 
 doit();
 
 /*
- 
- IPv4
- name
+ '1.1.1.1' isa ipv4
+ 'ordoid1' isa name
+ '1.1.1.1' has 'odroid1'
 */
