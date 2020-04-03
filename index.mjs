@@ -21,7 +21,7 @@ async function doit() {
     repositoryNamespace
   );
 
-  const { has, isa, ipv4, name } = ["has", "isa", "ipv4", "name"].map(name => {
+  const [ has, isa, ipv4, name ] = ["has", "isa", "ipv4", "name"].map(name => {
     const symbol = writer.createSymbol(recordingNamespace);
     writer.setData(symbol, name);
     return symbol; });
@@ -32,7 +32,7 @@ async function doit() {
     })
   );
 
-  readZone(data.records, writer, has, isa, recordingNamespace);
+  readZone(data.records, writer, has, isa, ipv4, name, recordingNamespace);
 
   writer.compressData();
   writer.commit();
@@ -50,7 +50,7 @@ function readZone(records, writer, has, isa, ipv4, name, ns) {
       writer.setData(a, record.content);
 
       const n = writer.createSymbol(ns);
-      writer.setData(name, record.name);
+      writer.setData(n, record.name);
 
       writer.setTriple([n, isa, name], true);
       writer.setTriple([a, isa, ipv4], true);
