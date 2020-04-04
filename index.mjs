@@ -1,7 +1,13 @@
 import fs from "fs";
 import { join } from "path";
 import dnsz from "dnsz";
-import { loaded, Diff, SymbolInternals, BasicBackend, RustWasmBackend } from "SymatemJS";
+import {
+  loaded,
+  Diff,
+  SymbolInternals,
+  BasicBackend,
+  RustWasmBackend,
+} from "SymatemJS";
 
 async function doit() {
   await loaded;
@@ -10,10 +16,15 @@ async function doit() {
 
   backend.initPredefinedSymbols();
 
-  const repositoryNamespace = SymbolInternals.identityOfSymbol(backend.createSymbol(BasicBackend.metaNamespaceIdentity));
-  const modalNamespace = SymbolInternals.identityOfSymbol(backend.createSymbol(BasicBackend.metaNamespaceIdentity));
-  const recordingNamespace = SymbolInternals.identityOfSymbol(backend.createSymbol(BasicBackend.metaNamespaceIdentity));
-
+  const repositoryNamespace = SymbolInternals.identityOfSymbol(
+    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+  );
+  const modalNamespace = SymbolInternals.identityOfSymbol(
+    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+  );
+  const recordingNamespace = SymbolInternals.identityOfSymbol(
+    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+  );
 
   const writer = new Diff(
     backend,
@@ -21,14 +32,15 @@ async function doit() {
     repositoryNamespace
   );
 
-  const [ has, isa, ipv4, name ] = ["has", "isa", "ipv4", "name"].map(name => {
+  const [has, isa, ipv4, name] = ["has", "isa", "ipv4", "name"].map((name) => {
     const symbol = writer.createSymbol(recordingNamespace);
     writer.setData(symbol, name);
-    return symbol; });
+    return symbol;
+  });
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
-      encoding: "utf8"
+      encoding: "utf8",
     })
   );
 
@@ -44,8 +56,8 @@ async function doit() {
 
 function readZone(records, writer, has, isa, ipv4, name, ns) {
   records
-    .filter(record => record.type === "A")
-    .forEach(record => {
+    .filter((record) => record.type === "A")
+    .forEach((record) => {
       const a = writer.createSymbol(ns);
       writer.setData(a, record.content);
 
