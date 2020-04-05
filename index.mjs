@@ -32,11 +32,13 @@ async function doit() {
     repositoryNamespace
   );
 
-  const [has, isa, ipv4, name] = ["has", "isa", "ipv4", "name"].map((name) => {
-    const symbol = writer.createSymbol(recordingNamespace);
-    writer.setData(symbol, name);
-    return symbol;
-  });
+  const { has, isa, ipv4, name } = Object.fromEntries(
+    ["has", "isa", "ipv4", "name", "root", "zone"].map((name) => {
+      const symbol = writer.createSymbol(recordingNamespace);
+      writer.setData(symbol, name);
+      return [name, symbol];
+    })
+  );
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
