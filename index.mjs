@@ -45,9 +45,13 @@ async function doit() {
   writer.compressData();
   writer.commit();
 
+  /*
   const fileContent = writer.encodeJson();
-  console.log(fileContent);
-  // await fs.promises.writeFile(join("/tmp", "001.json"), fileContent, { encoding: 'utf8' });
+*/
+
+  //console.log(backend.encodeJson([recordingNamespace]));
+
+   await fs.promises.writeFile("dump-001.json", backend.encodeJson([recordingNamespace]), { encoding: 'utf8' });
 }
 
 function readZone(records, writer, has, isa, ipv4, name, ns) {
