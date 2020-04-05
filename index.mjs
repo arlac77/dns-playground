@@ -32,13 +32,7 @@ async function doit() {
     repositoryNamespace
   );
 
-  const { has, isa, ipv4, name } = Object.fromEntries(
-    ["has", "isa", "ipv4", "name", "root", "zone"].map((name) => {
-      const symbol = writer.createSymbol(recordingNamespace);
-      writer.setData(symbol, name);
-      return [name, symbol];
-    })
-  );
+  const { has, isa, ipv4, name } = createOntology(writer, recordingNamespace);
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
@@ -70,6 +64,27 @@ function readZone(records, writer, has, isa, ipv4, name, ns) {
       writer.setTriple([a, isa, ipv4], true);
       writer.setTriple([a, has, n], true);
     });
+}
+
+function createOntology(writer, recordingNamespace) {
+  const o = Object.fromEntries(
+    ["has", "isa", "ipv4", "name", "root", "zone", "ontology"].map((name) => {
+      const symbol = writer.createSymbol(recordingNamespace);
+      writer.setData(symbol, name);
+      return [name, symbol];
+    })
+  );
+
+  const {root, isa, has, ontology} = o;
+  writer.setTriple([root, isa, ontology], true);
+
+
+  for(const item of Object.values(ontology)) {
+    if(item === ontology) continue;
+    writer.setTriple([ontology, has, item], true);
+  }
+
+  return o;
 }
 
 doit();
