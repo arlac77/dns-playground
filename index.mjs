@@ -90,6 +90,15 @@ function createOntology(writer, recordingNamespace) {
 doit();
 
 /*
+ ontology:
+    isa   - subject isa category?
+    has   - subject has attribute
+
+    ontology
+    name
+    ipv4
+    zone
+
  '1.1.1.1' isa ipv4
  'ordoid1' isa name
  '1.1.1.1' has 'odroid1'
