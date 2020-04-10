@@ -56,8 +56,8 @@ async function doit() {
 
 function readZone(records, writer, has, isa, ipv4, name, ns) {
   records
-    .filter((record) => record.type === "A")
-    .forEach((record) => {
+    .filter(record => record.type === "A")
+    .forEach(record => {
       const a = writer.createSymbol(ns);
       writer.setData(a, record.content);
 
@@ -72,7 +72,7 @@ function readZone(records, writer, has, isa, ipv4, name, ns) {
 
 function createOntology(writer, recordingNamespace) {
   const o = Object.fromEntries(
-    ["has", "isa", "ipv4", "name", "root", "zone", "ontology"].map((name) => {
+    ["has", "isa", "ipv4", "name", "root", "zone", "ontology"].map(name => {
       const symbol = writer.createSymbol(recordingNamespace);
       writer.setData(symbol, name);
       return [name, symbol];
