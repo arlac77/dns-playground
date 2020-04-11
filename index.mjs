@@ -6,7 +6,7 @@ import {
   Diff,
   SymbolInternals,
   BasicBackend,
-  RustWasmBackend,
+  RustWasmBackend
 } from "SymatemJS";
 
 async function doit() {
@@ -36,7 +36,7 @@ async function doit() {
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
-      encoding: "utf8",
+      encoding: "utf8"
     })
   );
 
@@ -51,7 +51,11 @@ async function doit() {
 
   //console.log(backend.encodeJson([recordingNamespace]));
 
-   await fs.promises.writeFile("dump-001.json", backend.encodeJson([recordingNamespace]), { encoding: 'utf8' });
+  await fs.promises.writeFile(
+    "dump-001.json",
+    backend.encodeJson([recordingNamespace]),
+    { encoding: "utf8" }
+  );
 }
 
 function readZone(records, writer, has, isa, ipv4, name, ns) {
@@ -72,19 +76,28 @@ function readZone(records, writer, has, isa, ipv4, name, ns) {
 
 function createOntology(writer, recordingNamespace) {
   const o = Object.fromEntries(
-    ["has", "isa", "ipv4", "name", "root", "zone", "ontology"].map(name => {
+    [
+      "attribute",
+      "value",
+      "has",
+      "isa",
+      "ipv4",
+      "name",
+      "root",
+      "zone",
+      "ontology"
+    ].map(name => {
       const symbol = writer.createSymbol(recordingNamespace);
       writer.setData(symbol, name);
       return [name, symbol];
     })
   );
 
-  const {root, isa, has, ontology} = o;
+  const { root, isa, has, ontology } = o;
   writer.setTriple([root, isa, ontology], true);
 
-
-  for(const item of Object.values(ontology)) {
-    if(item === ontology) continue;
+  for (const item of Object.values(ontology)) {
+    if (item === ontology) continue;
     writer.setTriple([ontology, has, item], true);
   }
 
