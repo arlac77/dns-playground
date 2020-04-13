@@ -74,26 +74,37 @@ function readZone(records, writer, has, isa, ipv4, name, ns) {
     });
 }
 
-function setMetaTriple(symbol, entity, attribute, value, ontology, writer, recordingNamespace) {
-  writer.setTriple([symbol, ontology.entity, entity], true);
-  writer.setTriple([symbol, ontology.attribute, attribute], true);
-  writer.setTriple([symbol, ontology.value, value], true);
+/**
+ * Links symbol to a triple
+ * @param {Symbol} symbol
+ * @param {Symbol[]} triple
+ * @param {Object} ontology
+ * @param writer
+ */
+function setMetaTriple(symbol, triple, ontology, writer) {
+  writer.setTriple([symbol, ontology.entity, triple[0]], true);
+  writer.setTriple([symbol, ontology.attribute, triple[1]], true);
+  writer.setTriple([symbol, ontology.value, triple[2]], true);
 }
 
 function createOntology(writer, recordingNamespace) {
+  const symbolNames = [
+    "entity",
+    "attribute",
+    "value",
+    "name",
+    "has",
+    "isa",
+    "ipv4",
+    "root",
+    "zone",
+    "ontology"
+  ];
+
+  writer.registerSymbolsInNamespace(recordingNamespace, symbolNames);
+
   const o = Object.fromEntries(
-    [
-      "entity",
-      "attribute",
-      "value",
-      "name",
-      "has",
-      "isa",
-      "ipv4",
-      "root",
-      "zone",
-      "ontology"
-    ].map(name => {
+    symbolNames.map(name => {
       const symbol = writer.createSymbol(recordingNamespace);
       writer.setData(symbol, name);
       return [name, symbol];
@@ -108,7 +119,7 @@ function createOntology(writer, recordingNamespace) {
     writer.setTriple([ontology, has, item], true);
   }
 
-  //setMetaTriple( ontology, has, name, o, writer, recordingNamespace); 
+  //setMetaTriple(ontology, [], o, writer);
 
   return o;
 }
