@@ -74,15 +74,22 @@ function readZone(records, writer, has, isa, ipv4, name, ns) {
     });
 }
 
+function setMetaTriple(symbol, entity, attribute, value, ontology, writer, recordingNamespace) {
+  writer.setTriple([symbol, ontology.entity, entity], true);
+  writer.setTriple([symbol, ontology.attribute, attribute], true);
+  writer.setTriple([symbol, ontology.value, value], true);
+}
+
 function createOntology(writer, recordingNamespace) {
   const o = Object.fromEntries(
     [
+      "entity",
       "attribute",
       "value",
+      "name",
       "has",
       "isa",
       "ipv4",
-      "name",
       "root",
       "zone",
       "ontology"
@@ -100,6 +107,8 @@ function createOntology(writer, recordingNamespace) {
     if (item === ontology) continue;
     writer.setTriple([ontology, has, item], true);
   }
+
+  //setMetaTriple( ontology, has, name, o, writer, recordingNamespace); 
 
   return o;
 }
