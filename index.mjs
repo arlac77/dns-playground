@@ -9,7 +9,7 @@ import {
   RustWasmBackend
 } from "SymatemJS";
 
-async function doit() {
+async function doit(dumpFileName) {
   await loaded;
 
   const backend = new RustWasmBackend();
@@ -24,6 +24,10 @@ async function doit() {
   );
   const recordingNamespace = SymbolInternals.identityOfSymbol(
     backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+  );
+
+  backend.decodeJson(
+    await fs.promises.readFile(dumpFileName, { encoding: "utf8" })
   );
 
   const writer = new Diff(
@@ -45,14 +49,8 @@ async function doit() {
   writer.compressData();
   writer.commit();
 
-  /*
-  const fileContent = writer.encodeJson();
-*/
-
-  //console.log(backend.encodeJson([recordingNamespace]));
-
   await fs.promises.writeFile(
-    "dump-001.json",
+    dumpFileName,
     backend.encodeJson([recordingNamespace]),
     { encoding: "utf8" }
   );
@@ -124,7 +122,7 @@ function createOntology(writer, recordingNamespace) {
   return o;
 }
 
-doit();
+doit(process.argv[2]);
 
 /*
  ontology:
