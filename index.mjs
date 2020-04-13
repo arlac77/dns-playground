@@ -26,9 +26,11 @@ async function doit(dumpFileName) {
     backend.createSymbol(BasicBackend.metaNamespaceIdentity)
   );
 
-  backend.decodeJson(
-    await fs.promises.readFile(dumpFileName, { encoding: "utf8" })
-  );
+  try {
+    backend.decodeJson(
+      await fs.promises.readFile(dumpFileName, { encoding: "utf8" })
+    );
+  } catch (e) {}
 
   const writer = new Diff(
     backend,
@@ -80,16 +82,13 @@ function readZone(records, writer, has, isa, ipv4, name, ns) {
  * @param writer
  */
 function setMetaTriple(symbol, triple, ontology, writer) {
-  writer.setTriple([symbol, ontology.entity, triple[0]], true);
-  writer.setTriple([symbol, ontology.attribute, triple[1]], true);
-  writer.setTriple([symbol, ontology.value, triple[2]], true);
+  writer.setTriple([symbol, ontology.Entity, triple[0]], true);
+  writer.setTriple([symbol, ontology.Attribute, triple[1]], true);
+  writer.setTriple([symbol, ontology.Value, triple[2]], true);
 }
 
 function createOntology(writer, recordingNamespace) {
   const symbolNames = [
-    "entity",
-    "attribute",
-    "value",
     "name",
     "has",
     "isa",
@@ -101,13 +100,9 @@ function createOntology(writer, recordingNamespace) {
 
   writer.registerSymbolsInNamespace(recordingNamespace, symbolNames);
 
-  const o = Object.fromEntries(
-    symbolNames.map(name => {
-      const symbol = writer.createSymbol(recordingNamespace);
-      writer.setData(symbol, name);
-      return [name, symbol];
-    })
-  );
+  const o = writer.symbolByName;
+
+  console.log(o);
 
   const { root, isa, has, ontology } = o;
   writer.setTriple([root, isa, ontology], true);
