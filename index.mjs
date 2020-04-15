@@ -38,7 +38,7 @@ async function doit(dumpFileName) {
     repositoryNamespace
   );
 
-  const { has, isa, ipv4, name } = createOntology(writer, recordingNamespace);
+  const ontology = createOntology(writer, recordingNamespace);
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
@@ -50,11 +50,7 @@ async function doit(dumpFileName) {
     data.records,
     backend,
     writer,
-    has,
-    isa,
-    ipv4,
-    name,
-    recordingNamespace
+    ontology
   );
 
   writer.compressData();
@@ -67,20 +63,26 @@ async function doit(dumpFileName) {
   );
 }
 
-function readZone(records, backend, writer, has, isa, ipv4, name, ns) {
+function readZone(records, backend, writer, o, ns) {
+  //console.log(records);
   records
     .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
       for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
         "",
-        isa,
-        name
+        o.isa,
+        o.name
       ])) {
+        console.log(x, backend.getData(x[0]), record.name);
+
         if(record.name === backend.getData(x[0])) {
           console.log("skip", record.name);
           return;
         }
       }
+      console.log(record.name);
+      
+      const e = writer.createSymbol(ns);
 
       const a = writer.createSymbol(ns);
       writer.setData(a, record.content);
@@ -88,9 +90,16 @@ function readZone(records, backend, writer, has, isa, ipv4, name, ns) {
       const n = writer.createSymbol(ns);
       writer.setData(n, record.name);
 
-      writer.setTriple([n, isa, name], true);
-      writer.setTriple([a, isa, ipv4], true);
-      writer.setTriple([a, has, n], true);
+      const t = writer.createSymbol(ns);
+      writer.setData(t, record.ttl);
+
+      writer.setTriple([e, o.isa, o.entry], true);
+      writer.setTriple([e, o.has, t], true);
+      writer.setTriple([e, o.has, n], true);
+      writer.setTriple([e, o.has, a], true);
+      writer.setTriple([n, o.isa, o.name], true);
+      writer.setTriple([a, o.isa, o.ipv4], true);
+      writer.setTriple([a, o.has, n], true);
     });
 }
 
@@ -109,13 +118,15 @@ function setMetaTriple(symbol, triple, ontology, writer) {
 
 function createOntology(writer, recordingNamespace) {
   const symbolNames = [
+    "ontology",
     "name",
+    "root",
     "has",
     "isa",
     "ipv4",
-    "root",
     "zone",
-    "ontology"
+    "entry",
+    "ttl"
   ];
 
   writer.registerSymbolsInNamespace(recordingNamespace, symbolNames);
@@ -147,7 +158,9 @@ doit(process.argv[2]);
     ontology
     name
     ipv4
+    ttl
     zone
+    entry
 
  '1.1.1.1' isa ipv4
  'ordoid1' isa name
