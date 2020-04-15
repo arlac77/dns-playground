@@ -62,8 +62,12 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   );
 }
 
-function dottedString2Number(x) {
+function dotted2Number(x) {
   return x.split(".").reduce((a, c) => a * 256 + parseInt(c, 10), 0);
+}
+
+function number2Dotted(x) {
+  return [24, 16, 8, 0].map(s => (x >> s) & 0xff).join(".");
 }
 
 function createDataSymbol(backend, writer, ns, attribute, value, data) {
@@ -78,14 +82,21 @@ function createDataSymbol(backend, writer, ns, attribute, value, data) {
   return s;
 }
 
-function dumpZone(backend, ontology)
-{
+function dumpZone(backend, ontology) {
   for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
     backend.symbolByName.Void,
     ontology.isa,
     ontology.name
   ])) {
     console.log(backend.getData(x[0]));
+  }
+
+  for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
+    backend.symbolByName.Void,
+    ontology.isa,
+    ontology.ipv4
+  ])) {
+    console.log(number2Dotted(backend.getData(x[0])));
   }
 }
 
@@ -121,7 +132,7 @@ function readZone(records, backend, writer, o, ns) {
         ns,
         o.isa,
         o.ipv4,
-        dottedString2Number(record.content)
+        dotted2Number(record.content)
       );
       const n = createDataSymbol(
         backend,
