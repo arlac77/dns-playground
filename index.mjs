@@ -69,7 +69,7 @@ async function doit(dumpFileName) {
 
 function readZone(records, backend, writer, has, isa, ipv4, name, ns) {
   records
-    .filter(record => record.type === "A")
+    .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
       for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
         "",
