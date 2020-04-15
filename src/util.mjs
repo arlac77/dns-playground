@@ -19,7 +19,7 @@ export function createOntology(writer, recordingNamespace) {
   }
 
   for (const a of attributes(zoneOntologyDef)) {
-    //   console.log(a);
+      // console.log(a);
     symbolNames.add(a.name);
   }
 
@@ -46,7 +46,7 @@ export function createOntology(writer, recordingNamespace) {
 function* attributes(od) {
   if (od.attributes) {
     for (const [name, def] of Object.entries(od.attributes)) {
-      yield { owner: od, name, ...def };
+      yield { owner: od, name, minOccurs: 1, maxOccurs: 1, ...def };
       yield* attributes(def);
     }
   }
@@ -78,8 +78,6 @@ const zoneOntologyDef = {
           maxOccurs: Number.MAX_SAFE_INTEGER,
           attributes: {
             name: {
-              minOccurs: 1,
-              maxOccurs: 1,
               minLengthBytes: 1,
               maxLengthBytes: 255
             },
@@ -90,19 +88,19 @@ const zoneOntologyDef = {
             A: {
               description: "a host address",
               attributes: {
-                ipv4: { minOccurs: 1, maxOccurs: 1 }
+                ipv4: {}
               }
             },
             CNAME: {
               description: "the canonical name for an alias",
               attributes: {
-                alias: { minOccurs: 1, maxOccurs: 1 }
+                alias: {}
               }
             },
             MX: {
               description: "mail exchange",
               attributes: {
-                mx: { minOccurs: 1, maxOccurs: 1 }
+                mx: {}
               }
             }
           }
