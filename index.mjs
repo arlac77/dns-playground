@@ -7,7 +7,7 @@ import {
   BasicBackend,
   RustWasmBackend
 } from "SymatemJS";
-import { createOntology, hasVMMData, createDataSymbol } from "./src/util.mjs";
+import { createOntology, registerDataSymbol } from "./src/util.mjs";
 import { dotted2Number, number2Dotted } from "./src/ip-util.mjs";
 
 const defaultEncoding = { encoding: "utf8" };
@@ -87,14 +87,16 @@ function readZone(records, backend, writer, o, ns) {
   records
     .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
+
+      /*
       if (hasVMMData(backend, o.isa, o.name, record.name)) {
         //console.log("skip", record.name);
         return;
-      }
+      }*/
 
       const r = writer.createSymbol(ns);
 
-      const a = createDataSymbol(
+      const a = registerDataSymbol(
         backend,
         writer,
         ns,
@@ -103,7 +105,7 @@ function readZone(records, backend, writer, o, ns) {
         dotted2Number(record.content),
         s => console.log("create", number2Dotted(writer.getData(s)))
       );
-      const n = createDataSymbol(
+      const n = registerDataSymbol(
         backend,
         writer,
         ns,
@@ -112,7 +114,7 @@ function readZone(records, backend, writer, o, ns) {
         record.name,
         s => console.log("create", writer.getData(s))
       );
-      const t = createDataSymbol(
+      const t = registerDataSymbol(
         backend,
         writer,
         ns,
@@ -122,12 +124,14 @@ function readZone(records, backend, writer, o, ns) {
         s => console.log("create", writer.getData(s))
       );
 
+      /*
       writer.setTriple([z, o.has, r], true);
       writer.setTriple([r, o.isa, o.record], true);
       writer.setTriple([r, o.has, t], true);
       writer.setTriple([r, o.has, n], true);
       writer.setTriple([r, o.has, a], true);
       writer.setTriple([a, o.has, n], true);
+      */
     });
 }
 

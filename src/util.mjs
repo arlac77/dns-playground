@@ -11,7 +11,17 @@ export function setMetaTriple(symbol, triple, ontology, writer) {
   writer.setTriple([symbol, ontology.Value, triple[2]], true);
 }
 
-export function createDataSymbol(
+/**
+ * Creates a symbol with associated data 
+ * @param backend 
+ * @param writer 
+ * @param ns 
+ * @param attribute tripple attribute
+ * @param value tripple value
+ * @param data associated to the entity symbol
+ * @param cb called only when symbol was not already present
+ */
+export function registerDataSymbol(
   backend,
   writer,
   ns,
