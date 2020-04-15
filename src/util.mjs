@@ -12,19 +12,20 @@ export function setMetaTriple(symbol, triple, ontology, writer) {
 }
 
 export function createOntology(writer, recordingNamespace) {
-  const symbolNames = ["ontology", "has", "isa"];
+  const symbolNames = new Set(["ontology", "has", "isa"]);
 
   for (const a of attributes(metaOntology)) {
-    symbolNames.push(a.name);
+    symbolNames.add(a.name);
   }
 
   for (const a of attributes(zoneOntologyDef)) {
-    symbolNames.push(a.name);
+    //   console.log(a);
+    symbolNames.add(a.name);
   }
 
   //console.log(symbolNames);
 
-  writer.registerSymbolsInNamespace(recordingNamespace, symbolNames);
+  writer.registerSymbolsInNamespace(recordingNamespace, [...symbolNames]);
 
   const o = writer.symbolByName;
 
@@ -49,13 +50,22 @@ function* attributes(od) {
       yield* attributes(def);
     }
   }
+  if (od.choice) {
+    for (const [name, def] of Object.entries(od.choice)) {
+      yield* attributes(def);
+    }
+  }
 }
 
 const metaOntology = {
   attributes: {
+    choice: {},
+    description: {},
     attributes: { minOccurs: 0, maxOccurs: 1 },
     minOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
-    maxOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 }
+    maxOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
+    minLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
+    maxLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 }
   }
 };
 
@@ -63,14 +73,38 @@ const zoneOntologyDef = {
   attributes: {
     zone: {
       attributes: {
-        entry: {
+        record: {
           minOccurs: 0,
           maxOccurs: Number.MAX_SAFE_INTEGER,
           attributes: {
-            name: { minOccurs: 1, maxOccurs: 1 },
+            name: {
+              minOccurs: 1,
+              maxOccurs: 1,
+              minLengthBytes: 1,
+              maxLengthBytes: 255
+            },
             ttl: { minOccurs: 0, maxOccurs: 1 },
-            ipv4: { minOccurs: 0, maxOccurs: 1 },
             comment: {}
+          },
+          choice: {
+            A: {
+              description: "a host address",
+              attributes: {
+                ipv4: { minOccurs: 1, maxOccurs: 1 }
+              }
+            },
+            CNAME: {
+              description: "the canonical name for an alias",
+              attributes: {
+                alias: { minOccurs: 1, maxOccurs: 1 }
+              }
+            },
+            MX: {
+              description: "mail exchange",
+              attributes: {
+                mx: { minOccurs: 1, maxOccurs: 1 }
+              }
+            }
           }
         }
       }

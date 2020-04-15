@@ -63,7 +63,6 @@ async function doit(dumpFileName) {
 function readZone(records, backend, writer, o, ns) {
   const z = writer.createSymbol(ns);
   writer.setTriple([z, o.isa, o.zone], true);
-  //console.log(records);
   records
     .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
@@ -81,7 +80,7 @@ function readZone(records, backend, writer, o, ns) {
       }
       console.log(record.name);
 
-      const e = writer.createSymbol(ns);
+      const r = writer.createSymbol(ns);
 
       const a = writer.createSymbol(ns);
       writer.setData(a, record.content);
@@ -92,11 +91,11 @@ function readZone(records, backend, writer, o, ns) {
       const t = writer.createSymbol(ns);
       writer.setData(t, record.ttl);
 
-      writer.setTriple([z, o.has, e], true);
-      writer.setTriple([e, o.isa, o.entry], true);
-      writer.setTriple([e, o.has, t], true);
-      writer.setTriple([e, o.has, n], true);
-      writer.setTriple([e, o.has, a], true);
+      writer.setTriple([z, o.has, r], true);
+      writer.setTriple([r, o.isa, o.record], true);
+      writer.setTriple([r, o.has, t], true);
+      writer.setTriple([r, o.has, n], true);
+      writer.setTriple([r, o.has, a], true);
       writer.setTriple([n, o.isa, o.name], true);
       writer.setTriple([a, o.isa, o.ipv4], true);
       writer.setTriple([a, o.has, n], true);
