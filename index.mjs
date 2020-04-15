@@ -64,6 +64,8 @@ async function doit(dumpFileName) {
 }
 
 function readZone(records, backend, writer, o, ns) {
+  const z = writer.createSymbol(ns);
+  writer.setTriple([z, o.isa, o.zone], true);
   //console.log(records);
   records
     .filter(record => record.type === "A" && record.name !== "@")
@@ -81,7 +83,7 @@ function readZone(records, backend, writer, o, ns) {
         }
       }
       console.log(record.name);
-      
+
       const e = writer.createSymbol(ns);
 
       const a = writer.createSymbol(ns);
@@ -93,6 +95,7 @@ function readZone(records, backend, writer, o, ns) {
       const t = writer.createSymbol(ns);
       writer.setData(t, record.ttl);
 
+      writer.setTriple([z, o.has, e], true);
       writer.setTriple([e, o.isa, o.entry], true);
       writer.setTriple([e, o.has, t], true);
       writer.setTriple([e, o.has, n], true);
@@ -120,7 +123,7 @@ function createOntology(writer, recordingNamespace) {
   const symbolNames = [
     "ontology",
     "name",
-    "root",
+    "description",
     "has",
     "isa",
     "ipv4",
@@ -135,12 +138,9 @@ function createOntology(writer, recordingNamespace) {
 
   //console.log(o);
 
-  const { root, isa, has, ontology } = o;
-  writer.setTriple([root, isa, ontology], true);
-
-  for (const item of Object.values(ontology)) {
-    if (item === ontology) continue;
-    writer.setTriple([ontology, has, item], true);
+  for (const item of Object.values(o)) {
+    if (item === o.ontology) continue;
+    writer.setTriple([o.ontology, o.has, item], true);
   }
 
   //setMetaTriple(ontology, [], o, writer);
