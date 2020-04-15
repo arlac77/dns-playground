@@ -11,7 +11,7 @@ import { createOntology, hasVMMData } from "./src/util.mjs";
 
 const defaultEncoding = { encoding: "utf8" };
 
-async function doit(dumpFileName) {
+async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   await loaded;
 
   const backend = new RustWasmBackend();
@@ -43,7 +43,7 @@ async function doit(dumpFileName) {
   const ontology = createOntology(backend, writer, recordingNamespace);
 
   const data = dnsz.parse(
-    await fs.promises.readFile("tests/fixtures/private.zone", {
+    await fs.promises.readFile(zoneFile, {
       encoding: "utf8"
     })
   );
@@ -71,7 +71,7 @@ function readZone(records, backend, writer, o, ns) {
         return;
       }
 
-      //console.log(record.name);
+      console.log(record.name);
 
       const r = writer.createSymbol(ns);
 
@@ -95,4 +95,4 @@ function readZone(records, backend, writer, o, ns) {
     });
 }
 
-doit(process.argv[2]);
+doit(process.argv[2], process.argv[3]);
