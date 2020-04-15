@@ -71,7 +71,7 @@ export function hasVMMData(backend, a, v, data) {
     a,
     v
   ])) {
-    console.log(data, "=", backend.getData(x[0]));
+    console.log(data, "=", backend.getData(x[0]), data === backend.getData(x[0]));
     if (data === backend.getData(x[0])) {
       return x[0];
     }
@@ -103,12 +103,16 @@ const metaOntology = {
     choice: {},
     attributes: { minOccurs: 0, maxOccurs: 1 },
     description: { type: "UTF8" },
+    physicalUnit: {},
     minValue: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     maxValue: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     minOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     maxOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     minLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     maxLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 }
+  },
+  physicalUnits: {
+    Second: {}
   }
 };
 
@@ -130,7 +134,8 @@ const zoneOntologyDef = {
               minValue: 1,
               maxValue: 2147483647,
               minOccurs: 0,
-              maxOccurs: 1
+              maxOccurs: 1,
+              physicalUnit: "Second"
             },
             comment: { minOccurs: 0 }
           },
