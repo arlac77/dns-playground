@@ -12,21 +12,17 @@ export function setMetaTriple(symbol, triple, ontology, writer) {
 }
 
 export function createOntology(writer, recordingNamespace) {
-  const symbolNames = [
-    "ontology",
-    "has",
-    "isa"
-  ];
+  const symbolNames = ["ontology", "has", "isa"];
 
   for (const a of attributes(metaOntology)) {
     symbolNames.push(a.name);
   }
 
-  for (const a of attributes(ontologyDef)) {
+  for (const a of attributes(zoneOntologyDef)) {
     symbolNames.push(a.name);
   }
 
-  console.log(symbolNames);
+  //console.log(symbolNames);
 
   writer.registerSymbolsInNamespace(recordingNamespace, symbolNames);
 
@@ -49,7 +45,7 @@ export function createOntology(writer, recordingNamespace) {
 function* attributes(od) {
   if (od.attributes) {
     for (const [name, def] of Object.entries(od.attributes)) {
-      yield { name, ...def };
+      yield { owner: od, name, ...def };
       yield* attributes(def);
     }
   }
@@ -57,13 +53,13 @@ function* attributes(od) {
 
 const metaOntology = {
   attributes: {
-    attributes: {},
-    minOccurs: {},
-    maxOccurs: {}
+    attributes: { minOccurs: 0, maxOccurs: 1 },
+    minOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
+    maxOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 }
   }
 };
 
-const ontologyDef = {
+const zoneOntologyDef = {
   attributes: {
     zone: {
       attributes: {
@@ -72,8 +68,8 @@ const ontologyDef = {
           maxOccurs: Number.MAX_SAFE_INTEGER,
           attributes: {
             name: { minOccurs: 1, maxOccurs: 1 },
-            ttl: {},
-            ipv4: {},
+            ttl: { minOccurs: 0, maxOccurs: 1 },
+            ipv4: { minOccurs: 0, maxOccurs: 1 },
             comment: {}
           }
         }
