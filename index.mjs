@@ -46,7 +46,16 @@ async function doit(dumpFileName) {
     })
   );
 
-  readZone(data.records, writer, has, isa, ipv4, name, recordingNamespace);
+  readZone(
+    data.records,
+    backend,
+    writer,
+    has,
+    isa,
+    ipv4,
+    name,
+    recordingNamespace
+  );
 
   writer.compressData();
   writer.commit();
@@ -58,10 +67,21 @@ async function doit(dumpFileName) {
   );
 }
 
-function readZone(records, writer, has, isa, ipv4, name, ns) {
+function readZone(records, backend, writer, has, isa, ipv4, name, ns) {
   records
     .filter(record => record.type === "A")
     .forEach(record => {
+      for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
+        "",
+        isa,
+        name
+      ])) {
+        if(record.name === backend.getData(x[0])) {
+          console.log("skip", record.name);
+          return;
+        }
+      }
+
       const a = writer.createSymbol(ns);
       writer.setData(a, record.content);
 
@@ -102,7 +122,7 @@ function createOntology(writer, recordingNamespace) {
 
   const o = writer.symbolByName;
 
-  console.log(o);
+  //console.log(o);
 
   const { root, isa, has, ontology } = o;
   writer.setTriple([root, isa, ontology], true);
