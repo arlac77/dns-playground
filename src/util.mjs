@@ -11,18 +11,23 @@ export function setMetaTriple(symbol, triple, ontology, writer) {
   writer.setTriple([symbol, ontology.Value, triple[2]], true);
 }
 
-export function createDataSymbol(backend, writer, ns, attribute, value, data) {
+export function createDataSymbol(
+  backend,
+  writer,
+  ns,
+  attribute,
+  value,
+  data,
+  cb
+) {
   let s = hasVMMData(backend, attribute, value, data);
 
-  if (s) {
-    console.log("found", data);
-  }
-  else {
+  if (s === undefined) {
     s = writer.createSymbol(ns);
     writer.setData(s, data);
     writer.setTriple([s, attribute, value], true);
-    console.log(data);
-  } 
+    if (cb) cb(s);
+  }
 
   return s;
 }
@@ -71,7 +76,12 @@ export function hasVMMData(backend, a, v, data) {
     a,
     v
   ])) {
-    console.log(data, "=", backend.getData(x[0]), data === backend.getData(x[0]));
+    /*console.log(
+      data,
+      "=",
+      backend.getData(x[0]),
+      data === backend.getData(x[0])
+    );*/
     if (data === backend.getData(x[0])) {
       return x[0];
     }
@@ -167,10 +177,3 @@ const zoneOntologyDef = {
     }
   }
 };
-
-/*
- ontology:
-    isa   - subject isa category?
-    has   - subject has attribute
-
-*/

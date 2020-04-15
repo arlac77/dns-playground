@@ -92,20 +92,7 @@ function readZone(records, backend, writer, o, ns) {
         return;
       }
 
-      //console.log(record.name);
-
       const r = writer.createSymbol(ns);
-
-      /*
-      const a = writer.createSymbol(ns);
-      writer.setData(a, dottedString2Number(record.content));
-      writer.setTriple([a, o.isa, o.ipv4], true);
-      const n = writer.createSymbol(ns);
-      writer.setData(n, record.name);
-      writer.setTriple([n, o.isa, o.name], true);
-      const t = writer.createSymbol(ns);
-      writer.setData(t, record.ttl);
-      */
 
       const a = createDataSymbol(
         backend,
@@ -113,7 +100,8 @@ function readZone(records, backend, writer, o, ns) {
         ns,
         o.isa,
         o.ipv4,
-        dotted2Number(record.content)
+        dotted2Number(record.content),
+        s => console.log("create", number2Dotted(writer.getData(s)))
       );
       const n = createDataSymbol(
         backend,
@@ -121,7 +109,8 @@ function readZone(records, backend, writer, o, ns) {
         ns,
         o.isa,
         o.name,
-        record.name
+        record.name,
+        s => console.log("create", writer.getData(s))
       );
       const t = createDataSymbol(
         backend,
@@ -129,7 +118,8 @@ function readZone(records, backend, writer, o, ns) {
         ns,
         o.isa,
         o.ttl,
-        parseInt(record.ttl, 10)
+        parseInt(record.ttl, 10),
+        s => console.log("create", writer.getData(s))
       );
 
       writer.setTriple([z, o.has, r], true);
