@@ -11,6 +11,22 @@ export function setMetaTriple(symbol, triple, ontology, writer) {
   writer.setTriple([symbol, ontology.Value, triple[2]], true);
 }
 
+export function createDataSymbol(backend, writer, ns, attribute, value, data) {
+  let s = hasVMMData(backend, attribute, value, data);
+
+  if (s) {
+    console.log("found", data);
+  }
+  else {
+    s = writer.createSymbol(ns);
+    writer.setData(s, data);
+    writer.setTriple([s, attribute, value], true);
+    console.log(data);
+  } 
+
+  return s;
+}
+
 export function createOntology(backend, writer, recordingNamespace) {
   const symbolNames = new Set(["ontology", "has", "isa"]);
 
@@ -55,6 +71,7 @@ export function hasVMMData(backend, a, v, data) {
     a,
     v
   ])) {
+    console.log(data, "=", backend.getData(x[0]));
     if (data === backend.getData(x[0])) {
       return x[0];
     }

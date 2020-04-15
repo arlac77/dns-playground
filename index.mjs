@@ -7,7 +7,8 @@ import {
   BasicBackend,
   RustWasmBackend
 } from "SymatemJS";
-import { createOntology, hasVMMData } from "./src/util.mjs";
+import { createOntology, hasVMMData, createDataSymbol } from "./src/util.mjs";
+import { dotted2Number, number2Dotted } from "./src/ip-util.mjs";
 
 const defaultEncoding = { encoding: "utf8" };
 
@@ -53,7 +54,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   writer.compressData();
   writer.commit();
 
-  dumpZone(backend, ontology);
+  //writeZone(backend, ontology);
 
   await fs.promises.writeFile(
     dumpFileName,
@@ -62,27 +63,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   );
 }
 
-function dotted2Number(x) {
-  return x.split(".").reduce((a, c) => a * 256 + parseInt(c, 10), 0);
-}
-
-function number2Dotted(x) {
-  return [24, 16, 8, 0].map(s => (x >> s) & 0xff).join(".");
-}
-
-function createDataSymbol(backend, writer, ns, attribute, value, data) {
-  let s = hasVMMData(backend, attribute, value, data);
-
-  if (!s) {
-    s = writer.createSymbol(ns);
-    writer.setData(s, data);
-    writer.setTriple([s, attribute, value], true);
-  }
-
-  return s;
-}
-
-function dumpZone(backend, ontology) {
+function writeZone(backend, ontology) {
   for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
     backend.symbolByName.Void,
     ontology.isa,
