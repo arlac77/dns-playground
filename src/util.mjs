@@ -101,7 +101,7 @@ const zoneOntologyDef = {
       attributes: {
         record: {
           minOccurs: 0,
-          maxOccurs: 0xFFFFFFFF,
+          maxOccurs: 0xffffffff,
           attributes: {
             name: {
               minLengthBytes: 1,
@@ -112,7 +112,9 @@ const zoneOntologyDef = {
               type: "BinaryNumber",
               minValue: 1,
               maxValue: 2147483647,
-              minOccurs: 0, maxOccurs: 1 },
+              minOccurs: 0,
+              maxOccurs: 1
+            },
             comment: { minOccurs: 0 }
           },
           choice: {

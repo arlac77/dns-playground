@@ -53,6 +53,8 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   writer.compressData();
   writer.commit();
 
+  dumpZone(backend, ontology);
+
   await fs.promises.writeFile(
     dumpFileName,
     backend.encodeJson([recordingNamespace]),
@@ -61,20 +63,30 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
 }
 
 function dottedString2Number(x) {
-  return x.split('.').reduce((a,c) => a * 256 + parseInt(c,10),0);
+  return x.split(".").reduce((a, c) => a * 256 + parseInt(c, 10), 0);
 }
 
-function createDataSymbol(backend,writer,ns,attribute,value,data)
-{
+function createDataSymbol(backend, writer, ns, attribute, value, data) {
   let s = hasVMMData(backend, attribute, value, data);
 
-  if(!s) {
+  if (!s) {
     s = writer.createSymbol(ns);
     writer.setData(s, data);
     writer.setTriple([s, attribute, value], true);
   }
 
   return s;
+}
+
+function dumpZone(backend, ontology)
+{
+  for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
+    backend.symbolByName.Void,
+    ontology.isa,
+    ontology.name
+  ])) {
+    console.log(backend.getData(x[0]));
+  }
 }
 
 function readZone(records, backend, writer, o, ns) {
@@ -103,9 +115,30 @@ function readZone(records, backend, writer, o, ns) {
       writer.setData(t, record.ttl);
       */
 
-      const a = createDataSymbol(backend, writer, ns, o.isa, o.ipv4, dottedString2Number(record.content));
-      const n = createDataSymbol(backend, writer, ns, o.isa, o.name, record.name);
-      const t = createDataSymbol(backend, writer, ns, o.isa, o.ttl, parseInt(record.ttl,10));
+      const a = createDataSymbol(
+        backend,
+        writer,
+        ns,
+        o.isa,
+        o.ipv4,
+        dottedString2Number(record.content)
+      );
+      const n = createDataSymbol(
+        backend,
+        writer,
+        ns,
+        o.isa,
+        o.name,
+        record.name
+      );
+      const t = createDataSymbol(
+        backend,
+        writer,
+        ns,
+        o.isa,
+        o.ttl,
+        parseInt(record.ttl, 10)
+      );
 
       writer.setTriple([z, o.has, r], true);
       writer.setTriple([r, o.isa, o.record], true);
