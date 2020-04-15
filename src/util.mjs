@@ -11,7 +11,7 @@ export function setMetaTriple(symbol, triple, ontology, writer) {
   writer.setTriple([symbol, ontology.Value, triple[2]], true);
 }
 
-export function createOntology(writer, recordingNamespace) {
+export function createOntology(backend, writer, recordingNamespace) {
   const symbolNames = new Set(["ontology", "has", "isa"]);
 
   for (const a of attributes(metaOntology)) {
@@ -19,7 +19,6 @@ export function createOntology(writer, recordingNamespace) {
   }
 
   for (const a of attributes(zoneOntologyDef)) {
-      // console.log(a);
     symbolNames.add(a.name);
   }
 
@@ -29,29 +28,54 @@ export function createOntology(writer, recordingNamespace) {
 
   const o = writer.symbolByName;
 
-  for (const item of Object.values(o)) {
-    if (item === o.ontology) continue;
-    writer.setTriple([o.ontology, o.has, item], true);
-  }
-
   //setMetaTriple(ontology, [], o, writer);
+
+  for (const a of attributes(zoneOntologyDef)) {
+    for (const ma of attributes(metaOntology)) {
+      const data = a[ma.name];
+      if (ma.type !== undefined && data !== undefined) {
+        let s = hasVMMData(backend, o.isa, o[ma.name], data);
+        if (!s) {
+          console.log(a.name, ma.name, data);
+          const s = writer.createSymbol(recordingNamespace);
+          writer.setTriple([s, o.isa, o[ma.name]], true);
+          writer.setData(s, data);
+          writer.setTriple([o[a.name], o.has, s], true);
+        }
+      }
+    }
+  }
 
   return o;
 }
 
+export function hasVMMData(backend, a, v, data) {
+  for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
+    "",
+    a,
+    v
+  ])) {
+    if (data === backend.getData(x[0])) {
+      return x[0];
+    }
+  }
+
+  return undefined;
+}
+
 /**
  * iterate over all attributes
- * @param od
+ * @param owner root of the definition to traverse
  */
-function* attributes(od) {
-  if (od.attributes) {
-    for (const [name, def] of Object.entries(od.attributes)) {
-      yield { owner: od, name, minOccurs: 1, maxOccurs: 1, ...def };
+function* attributes(owner) {
+  if (owner.attributes) {
+    for (const [name, def] of Object.entries(owner.attributes)) {
+      yield { owner, name, minOccurs: 1, maxOccurs: 1, ...def };
       yield* attributes(def);
     }
   }
-  if (od.choice) {
-    for (const [name, def] of Object.entries(od.choice)) {
+  if (owner.choice) {
+    for (const [name, def] of Object.entries(owner.choice)) {
       yield* attributes(def);
     }
   }
@@ -60,8 +84,8 @@ function* attributes(od) {
 const metaOntology = {
   attributes: {
     choice: {},
-    description: {},
     attributes: { minOccurs: 0, maxOccurs: 1 },
+    description: { type: "UTF8" },
     minOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     maxOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     minLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
@@ -75,7 +99,7 @@ const zoneOntologyDef = {
       attributes: {
         record: {
           minOccurs: 0,
-          maxOccurs: Number.MAX_SAFE_INTEGER,
+          maxOccurs: 100000, //Number.MAX_SAFE_INTEGER,
           attributes: {
             name: {
               minLengthBytes: 1,
@@ -88,7 +112,9 @@ const zoneOntologyDef = {
             A: {
               description: "a host address",
               attributes: {
-                ipv4: {}
+                ipv4: {
+                  description: "ip-v4 address in quad-dotted string format"
+                }
               }
             },
             CNAME: {

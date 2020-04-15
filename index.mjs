@@ -7,7 +7,7 @@ import {
   BasicBackend,
   RustWasmBackend
 } from "SymatemJS";
-import { createOntology } from "./src/util.mjs";
+import { createOntology, hasVMMData } from "./src/util.mjs";
 
 const defaultEncoding = { encoding: "utf8" };
 
@@ -40,7 +40,7 @@ async function doit(dumpFileName) {
     repositoryNamespace
   );
 
-  const ontology = createOntology(writer, recordingNamespace);
+  const ontology = createOntology(backend, writer, recordingNamespace);
 
   const data = dnsz.parse(
     await fs.promises.readFile("tests/fixtures/private.zone", {
@@ -66,19 +66,12 @@ function readZone(records, backend, writer, o, ns) {
   records
     .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
-      for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
-        "",
-        o.isa,
-        o.name
-      ])) {
-        //console.log(x, backend.getData(x[0]), record.name);
-
-        if (record.name === backend.getData(x[0])) {
-          //console.log("skip", record.name);
-          return;
-        }
+      if (hasVMMData(backend, o.isa, o.name, record.name)) {
+        //console.log("skip", record.name);
+        return;
       }
-      console.log(record.name);
+
+      //console.log(record.name);
 
       const r = writer.createSymbol(ns);
 
