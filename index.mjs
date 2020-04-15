@@ -9,6 +9,8 @@ import {
 } from "SymatemJS";
 import { createOntology } from "./src/util.mjs";
 
+const defaultEncoding = { encoding: "utf8" };
+
 async function doit(dumpFileName) {
   await loaded;
 
@@ -28,7 +30,7 @@ async function doit(dumpFileName) {
 
   try {
     backend.decodeJson(
-      await fs.promises.readFile(dumpFileName, { encoding: "utf8" })
+      await fs.promises.readFile(dumpFileName, defaultEncoding)
     );
   } catch (e) {}
 
@@ -46,12 +48,7 @@ async function doit(dumpFileName) {
     })
   );
 
-  readZone(
-    data.records,
-    backend,
-    writer,
-    ontology
-  );
+  readZone(data.records, backend, writer, ontology);
 
   writer.compressData();
   writer.commit();
@@ -59,7 +56,7 @@ async function doit(dumpFileName) {
   await fs.promises.writeFile(
     dumpFileName,
     backend.encodeJson([recordingNamespace]),
-    { encoding: "utf8" }
+    defaultEncoding
   );
 }
 
@@ -75,10 +72,10 @@ function readZone(records, backend, writer, o, ns) {
         o.isa,
         o.name
       ])) {
-        console.log(x, backend.getData(x[0]), record.name);
+        //console.log(x, backend.getData(x[0]), record.name);
 
-        if(record.name === backend.getData(x[0])) {
-          console.log("skip", record.name);
+        if (record.name === backend.getData(x[0])) {
+          //console.log("skip", record.name);
           return;
         }
       }
@@ -106,22 +103,4 @@ function readZone(records, backend, writer, o, ns) {
     });
 }
 
-
 doit(process.argv[2]);
-
-/*
- ontology:
-    isa   - subject isa category?
-    has   - subject has attribute
-
-    ontology
-    name
-    ipv4
-    ttl
-    zone
-    entry
-
- '1.1.1.1' isa ipv4
- 'ordoid1' isa name
- '1.1.1.1' has 'odroid1'
-*/

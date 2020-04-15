@@ -14,21 +14,23 @@ export function setMetaTriple(symbol, triple, ontology, writer) {
 export function createOntology(writer, recordingNamespace) {
   const symbolNames = [
     "ontology",
-    "name",
-    "description",
     "has",
-    "isa",
-    "ipv4",
-    "zone",
-    "entry",
-    "ttl"
+    "isa"
   ];
+
+  for (const a of attributes(metaOntology)) {
+    symbolNames.push(a.name);
+  }
+
+  for (const a of attributes(ontologyDef)) {
+    symbolNames.push(a.name);
+  }
+
+  console.log(symbolNames);
 
   writer.registerSymbolsInNamespace(recordingNamespace, symbolNames);
 
   const o = writer.symbolByName;
-
-  //console.log(o);
 
   for (const item of Object.values(o)) {
     if (item === o.ontology) continue;
@@ -39,3 +41,53 @@ export function createOntology(writer, recordingNamespace) {
 
   return o;
 }
+
+/**
+ * iterate over all attributes
+ * @param od
+ */
+function* attributes(od) {
+  if (od.attributes) {
+    for (const [name, def] of Object.entries(od.attributes)) {
+      yield { name, ...def };
+      yield* attributes(def);
+    }
+  }
+}
+
+const metaOntology = {
+  attributes: {
+    attributes: {},
+    minOccurs: {},
+    maxOccurs: {}
+  }
+};
+
+const ontologyDef = {
+  attributes: {
+    zone: {
+      attributes: {
+        entry: {
+          minOccurs: 0,
+          maxOccurs: Number.MAX_SAFE_INTEGER,
+          attributes: {
+            name: { minOccurs: 1, maxOccurs: 1 },
+            ttl: {},
+            ipv4: {},
+            comment: {}
+          }
+        }
+      }
+    }
+  }
+};
+
+/*
+ ontology:
+    isa   - subject isa category?
+    has   - subject has attribute
+
+ '1.1.1.1' isa ipv4
+ 'ordoid1' isa name
+ '1.1.1.1' has 'odroid1'
+*/
