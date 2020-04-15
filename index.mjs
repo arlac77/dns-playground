@@ -60,6 +60,23 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   );
 }
 
+function dottedString2Number(x) {
+  return x.split('.').reduce((a,c) => a * 256 + parseInt(c,10),0);
+}
+
+function createDataSymbol(backend,writer,ns,attribute,value,data)
+{
+  let s = hasVMMData(backend, attribute, value, data);
+
+  if(!s) {
+    s = writer.createSymbol(ns);
+    writer.setData(s, data);
+    writer.setTriple([s, attribute, value], true);
+  }
+
+  return s;
+}
+
 function readZone(records, backend, writer, o, ns) {
   const z = writer.createSymbol(ns);
   writer.setTriple([z, o.isa, o.zone], true);
@@ -71,26 +88,30 @@ function readZone(records, backend, writer, o, ns) {
         return;
       }
 
-      console.log(record.name);
+      //console.log(record.name);
 
       const r = writer.createSymbol(ns);
 
+      /*
       const a = writer.createSymbol(ns);
-      writer.setData(a, record.content);
-
+      writer.setData(a, dottedString2Number(record.content));
+      writer.setTriple([a, o.isa, o.ipv4], true);
       const n = writer.createSymbol(ns);
       writer.setData(n, record.name);
-
+      writer.setTriple([n, o.isa, o.name], true);
       const t = writer.createSymbol(ns);
       writer.setData(t, record.ttl);
+      */
+
+      const a = createDataSymbol(backend, writer, ns, o.isa, o.ipv4, dottedString2Number(record.content));
+      const n = createDataSymbol(backend, writer, ns, o.isa, o.name, record.name);
+      const t = createDataSymbol(backend, writer, ns, o.isa, o.ttl, parseInt(record.ttl,10));
 
       writer.setTriple([z, o.has, r], true);
       writer.setTriple([r, o.isa, o.record], true);
       writer.setTriple([r, o.has, t], true);
       writer.setTriple([r, o.has, n], true);
       writer.setTriple([r, o.has, a], true);
-      writer.setTriple([n, o.isa, o.name], true);
-      writer.setTriple([a, o.isa, o.ipv4], true);
       writer.setTriple([a, o.has, n], true);
     });
 }

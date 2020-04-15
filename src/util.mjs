@@ -105,7 +105,7 @@ const zoneOntologyDef = {
               minLengthBytes: 1,
               maxLengthBytes: 255
             },
-            ttl: { minOccurs: 0, maxOccurs: 1 },
+            ttl: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
             comment: {}
           },
           choice: {
@@ -113,7 +113,8 @@ const zoneOntologyDef = {
               description: "a host address",
               attributes: {
                 ipv4: {
-                  description: "ip-v4 address in quad-dotted string format"
+                  type: "BinaryNumber",
+                  description: "ip-v4 address as 32 bit integer"
                 }
               }
             },
