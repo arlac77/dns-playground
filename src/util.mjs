@@ -51,7 +51,7 @@ export function createOntology(backend, writer, recordingNamespace) {
 
 export function hasVMMData(backend, a, v, data) {
   for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
-    "",
+    backend.symbolByName.Void,
     a,
     v
   ])) {
@@ -86,6 +86,8 @@ const metaOntology = {
     choice: {},
     attributes: { minOccurs: 0, maxOccurs: 1 },
     description: { type: "UTF8" },
+    minValue: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
+    maxValue: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     minOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     maxOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     minLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
@@ -99,14 +101,19 @@ const zoneOntologyDef = {
       attributes: {
         record: {
           minOccurs: 0,
-          maxOccurs: 100000, //Number.MAX_SAFE_INTEGER,
+          maxOccurs: 0xFFFFFFFF,
           attributes: {
             name: {
               minLengthBytes: 1,
               maxLengthBytes: 255
             },
-            ttl: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
-            comment: {}
+            ttl: {
+              description: "time to live in seconds",
+              type: "BinaryNumber",
+              minValue: 1,
+              maxValue: 2147483647,
+              minOccurs: 0, maxOccurs: 1 },
+            comment: { minOccurs: 0 }
           },
           choice: {
             A: {
@@ -142,7 +149,4 @@ const zoneOntologyDef = {
     isa   - subject isa category?
     has   - subject has attribute
 
- '1.1.1.1' isa ipv4
- 'ordoid1' isa name
- '1.1.1.1' has 'odroid1'
 */
