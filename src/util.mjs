@@ -59,8 +59,6 @@ export function createOntology(backend, writer, ns) {
 
   const o = writer.symbolByName;
 
-  //setMetaTriple(ontology, [], o, writer);
-
   for (const a of attributes(zoneOntologyDef)) {
     for (const ma of attributes(metaOntology)) {
       const data = a[ma.name];
@@ -124,8 +122,8 @@ const metaOntology = {
     maxValue: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     minOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     maxOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
-    minLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
-    maxLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 }
+    minLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1, minValue: 0 },
+    maxLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1, minValue: 0 }
   },
   physicalUnits: {
     Second: {}
@@ -144,7 +142,7 @@ const zoneOntologyDef = {
         },
         ipv4: {
           type: "BinaryNumber",
-          description: "ip-v4 address as 32 bit integer"
+          description: "ip-v4 address as 32 bit integer",
           minOccurs: 0,
           maxOccurs: 1024,
         }
