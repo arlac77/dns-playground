@@ -43,7 +43,12 @@ export function registerDataSymbol(
 }
 
 export function createOntology(backend, writer, ns) {
-  const symbolNames = new Set(["ontology", "has", "isa"]);
+  const symbolNames = new Set([
+    "ontology",
+    "has",
+    "isa",
+    ...Object.keys(metaOntology.physicalUnits)
+  ]);
 
   for (const a of attributes(metaOntology)) {
     symbolNames.add(a.name);
@@ -122,8 +127,18 @@ const metaOntology = {
     maxValue: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     minOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     maxOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
-    minLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1, minValue: 0 },
-    maxLengthBytes: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1, minValue: 0 }
+    minLengthBytes: {
+      type: "BinaryNumber",
+      minOccurs: 0,
+      maxOccurs: 1,
+      minValue: 0
+    },
+    maxLengthBytes: {
+      type: "BinaryNumber",
+      minOccurs: 0,
+      maxOccurs: 1,
+      minValue: 0
+    }
   },
   physicalUnits: {
     Second: {}
@@ -134,17 +149,14 @@ const zoneOntologyDef = {
   attributes: {
     networkInterface: {
       attributes: {
-        name: {
-        },
-        type: {
-        },
-        macAddress: {
-        },
+        name: {},
+        type: {},
+        macAddress: {},
         ipv4: {
           type: "BinaryNumber",
           description: "ip-v4 address as 32 bit integer",
           minOccurs: 0,
-          maxOccurs: 1024,
+          maxOccurs: 1024
         }
       }
     },
