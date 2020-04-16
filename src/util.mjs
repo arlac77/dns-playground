@@ -134,6 +134,22 @@ const metaOntology = {
 
 const zoneOntologyDef = {
   attributes: {
+    networkInterface: {
+      attributes: {
+        name: {
+        },
+        type: {
+        },
+        macAddress: {
+        },
+        ipv4: {
+          type: "BinaryNumber",
+          description: "ip-v4 address as 32 bit integer"
+          minOccurs: 0,
+          maxOccurs: 1024,
+        }
+      }
+    },
     zone: {
       attributes: {
         record: {
