@@ -2,7 +2,7 @@ import test from "ava";
 import { dotted2Number, number2Dotted } from "../src/ip-util.mjs";
 
 function dnt(t, d) {
-  t.is(d, number2Dotted(dotted2Number(d)), d);
+  t.is(d, number2Dotted(dotted2Number(d)), `${d}<>${dotted2Number(d)}`);
 }
 
 dnt.title = (providedTitle = "dotted2Number & back", d) =>
