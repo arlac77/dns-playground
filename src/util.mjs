@@ -2,13 +2,12 @@
  * Links symbol to a triple
  * @param {Symbol} symbol
  * @param {Symbol[]} triple
- * @param {Object} ontology
  * @param writer
  */
-export function setMetaTriple(symbol, triple, ontology, writer) {
-  writer.setTriple([symbol, ontology.Entity, triple[0]], true);
-  writer.setTriple([symbol, ontology.Attribute, triple[1]], true);
-  writer.setTriple([symbol, ontology.Value, triple[2]], true);
+export function setMetaTriple(symbol, triple, writer) {
+  writer.setTriple([symbol, writer.symbolByName.Entity, triple[0]], true);
+  writer.setTriple([symbol, writer.symbolByName.Attribute, triple[1]], true);
+  writer.setTriple([symbol, writer.symbolByName.Value, triple[2]], true);
 }
 
 /**
