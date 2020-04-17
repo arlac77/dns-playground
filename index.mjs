@@ -9,6 +9,7 @@ import {
 } from "SymatemJS";
 import { createOntology, registerDataSymbol } from "./src/util.mjs";
 import { dotted2Number, number2Dotted } from "./src/ip-util.mjs";
+import { zoneOntologyDef } from "./src/zone.mjs";
 
 const defaultEncoding = { encoding: "utf8" };
 
@@ -41,7 +42,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
     repositoryNamespace
   );
 
-  const ontology = createOntology(backend, writer, recordingNamespace);
+  const ontology = createOntology(backend, writer, recordingNamespace, zoneOntologyDef);
 
   const data = dnsz.parse(
     await fs.promises.readFile(zoneFile, {

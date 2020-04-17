@@ -42,7 +42,7 @@ export function registerDataSymbol(
   return s;
 }
 
-export function createOntology(backend, writer, ns) {
+export function createOntology(backend, writer, ns, ontologyDefintion) {
   const symbolNames = new Set([
     "ontology",
     "has",
@@ -54,7 +54,7 @@ export function createOntology(backend, writer, ns) {
     symbolNames.add(a.name);
   }
 
-  for (const a of attributes(zoneOntologyDef)) {
+  for (const a of attributes(ontologyDefintion)) {
     symbolNames.add(a.name);
   }
 
@@ -64,7 +64,7 @@ export function createOntology(backend, writer, ns) {
 
   const o = writer.symbolByName;
 
-  for (const a of attributes(zoneOntologyDef)) {
+  for (const a of attributes(ontologyDefintion)) {
     for (const ma of attributes(metaOntology)) {
       const data = a[ma.name];
       if (ma.type !== undefined && data !== undefined) {
@@ -142,70 +142,5 @@ const metaOntology = {
   },
   physicalUnits: {
     Second: {}
-  }
-};
-
-const zoneOntologyDef = {
-  attributes: {
-    networkInterface: {
-      attributes: {
-        name: {},
-        type: {},
-        macAddress: {},
-        ipv4: {
-          type: "BinaryNumber",
-          description: "ip-v4 address as 32 bit integer",
-          minOccurs: 0,
-          maxOccurs: 1024
-        }
-      }
-    },
-    zone: {
-      attributes: {
-        record: {
-          minOccurs: 0,
-          maxOccurs: 0xffffffff,
-          attributes: {
-            name: {
-              minLengthBytes: 1,
-              maxLengthBytes: 255
-            },
-            ttl: {
-              description: "time to live in seconds",
-              type: "BinaryNumber",
-              minValue: 1,
-              maxValue: 2147483647,
-              minOccurs: 0,
-              maxOccurs: 1,
-              physicalUnit: "Second"
-            },
-            comment: { minOccurs: 0 }
-          },
-          choice: {
-            A: {
-              description: "a host address",
-              attributes: {
-                ipv4: {
-                  type: "BinaryNumber",
-                  description: "ip-v4 address as 32 bit integer"
-                }
-              }
-            },
-            CNAME: {
-              description: "the canonical name for an alias",
-              attributes: {
-                alias: {}
-              }
-            },
-            MX: {
-              description: "mail exchange",
-              attributes: {
-                mx: {}
-              }
-            }
-          }
-        }
-      }
-    }
   }
 };
