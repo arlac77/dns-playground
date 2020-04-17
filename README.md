@@ -9,3 +9,20 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/arlac77/dns-playground/badge.svg)](https://snyk.io/test/github/arlac77/dns-playground)
 [![codecov.io](http://codecov.io/github/arlac77/dns-playground/coverage.svg?branch=master)](http://codecov.io/github/arlac77/dns-playground?branch=master)
 [![Coverage Status](https://coveralls.io/repos/arlac77/dns-playground/badge.svg)](https://coveralls.io/r/arlac77/dns-playground)
+
+# dns-playground
+
+playing around with dns & Symatem
+
+
+# install
+
+With [npm](http://npmjs.org) do:
+
+```shell
+npm install dns-playground
+```
+
+# license
+
+BSD-2-Clause
