@@ -11,13 +11,14 @@ export function setMetaTriple(symbol, triple, writer) {
 }
 
 /**
- * Creates a symbol with associated data
- * @param backend
+ * Creates a symbol with associated data.
+ * But only if there is no such symbol already
+ * @param {Backend} backend
  * @param writer
- * @param ns
- * @param attribute tripple attribute
- * @param value tripple value
- * @param data associated to the entity symbol
+ * @param {Symbol} ns
+ * @param {Symbol} attribute tripple attribute
+ * @param {Symbol} value tripple value
+ * @param {any} data associated to the entity symbol
  * @param cb called only when symbol was not already present
  */
 export function registerDataSymbol(
