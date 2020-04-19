@@ -7,7 +7,7 @@ import {
   BasicBackend,
   RustWasmBackend
 } from "SymatemJS";
-import { createOntology, registerDataSymbol } from "./src/util.mjs";
+import { createOntology, registerDataSymbol, hasVMMData } from "./src/util.mjs";
 import { dotted2Number, number2Dotted } from "./src/ip-util.mjs";
 import { zoneOntologyDef } from "./src/zone.mjs";
 
@@ -42,7 +42,12 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
     repositoryNamespace
   );
 
-  const ontology = createOntology(backend, writer, recordingNamespace, zoneOntologyDef);
+  const ontology = createOntology(
+    backend,
+    writer,
+    recordingNamespace,
+    zoneOntologyDef
+  );
 
   const data = dnsz.parse(
     await fs.promises.readFile(zoneFile, {
@@ -50,7 +55,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
     })
   );
 
-  readZone(data.records, backend, writer, ontology);
+  readZone(data.records, backend, writer, ontology, recordingNamespace);
 
   writer.compressData();
   writer.commit();
@@ -88,12 +93,11 @@ function readZone(records, backend, writer, o, ns) {
   records
     .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
-
-      /*
+      
       if (hasVMMData(backend, o.isa, o.name, record.name)) {
-        //console.log("skip", record.name);
+        console.log("skip", record.name);
         return;
-      }*/
+      }
 
       const r = writer.createSymbol(ns);
 
@@ -103,8 +107,8 @@ function readZone(records, backend, writer, o, ns) {
         ns,
         o.isa,
         o.ipv4,
-        dotted2Number(record.content),
-        s => console.log("create", number2Dotted(writer.getData(s)))
+        dotted2Number(record.content)
+        // s => console.log("create", number2Dotted(writer.getData(s)))
       );
       const n = registerDataSymbol(
         backend,
@@ -112,8 +116,8 @@ function readZone(records, backend, writer, o, ns) {
         ns,
         o.isa,
         o.name,
-        record.name,
-        s => console.log("create", writer.getData(s))
+        record.name
+        // s => console.log("create", writer.getData(s))
       );
       const t = registerDataSymbol(
         backend,
@@ -121,18 +125,18 @@ function readZone(records, backend, writer, o, ns) {
         ns,
         o.isa,
         o.ttl,
-        parseInt(record.ttl, 10),
-        s => console.log("create", writer.getData(s))
+        parseInt(record.ttl, 10)
+        // s => console.log("create", writer.getData(s))
       );
 
-      /*
+      
       writer.setTriple([z, o.has, r], true);
       writer.setTriple([r, o.isa, o.record], true);
       writer.setTriple([r, o.has, t], true);
       writer.setTriple([r, o.has, n], true);
       writer.setTriple([r, o.has, a], true);
       writer.setTriple([a, o.has, n], true);
-      */
+      
     });
 }
 

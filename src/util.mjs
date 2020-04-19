@@ -35,6 +35,9 @@ export function registerDataSymbol(
     s = writer.createSymbol(ns);
     writer.setData(s, data);
     writer.setTriple([s, attribute, value], true);
+
+    //console.log("create",s, attribute, value, data);
+
     if (cb) cb(s);
   }
 
@@ -84,12 +87,13 @@ export function hasVMMData(backend, a, v, data) {
     a,
     v
   ])) {
-    /*console.log(
+    /*console.log(a,v,
       data,
       "=",
       backend.getData(x[0]),
       data === backend.getData(x[0])
-    );*/
+    );
+    */
     if (data === backend.getData(x[0])) {
       return x[0];
     }
