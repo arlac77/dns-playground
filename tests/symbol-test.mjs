@@ -3,7 +3,6 @@ import {
   loaded,
   Diff,
   SymbolInternals,
-  BasicBackend,
   RustWasmBackend
 } from "SymatemJS";
 
@@ -17,14 +16,15 @@ async function prepareBackend() {
   backend.initPredefinedSymbols();
 
   const repositoryNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+    backend.createSymbol(backend.metaNamespaceIdentity)
   );
   const modalNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+    backend.createSymbol(backend.metaNamespaceIdentity)
   );
   const recordingNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+    backend.createSymbol(backend.metaNamespaceIdentity)
   );
+
   const writer = new Diff(
     backend,
     { [recordingNamespace]: modalNamespace },
@@ -35,12 +35,11 @@ async function prepareBackend() {
 }
 
 test("s1", async t => {
-  const { backend, writer, recordingNamespace } = await prepareBackend();
+  const { writer, recordingNamespace } = await prepareBackend();
 
   writer.registerSymbolsInNamespace(recordingNamespace, ["isa", "something"]);
 
   const s = registerDataSymbol(
-    backend,
     writer,
     recordingNamespace,
     writer.symbolByName.isa,

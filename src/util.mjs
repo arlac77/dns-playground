@@ -2,19 +2,18 @@
  * Links symbol to a triple
  * @param {Symbol} symbol
  * @param {Symbol[]} triple
- * @param writer
+ * @param {Backend} backend
  */
-export function setMetaTriple(symbol, triple, writer) {
-  writer.setTriple([symbol, writer.symbolByName.Entity, triple[0]], true);
-  writer.setTriple([symbol, writer.symbolByName.Attribute, triple[1]], true);
-  writer.setTriple([symbol, writer.symbolByName.Value, triple[2]], true);
+export function setMetaTriple(symbol, triple, backend) {
+  backend.setTriple([symbol, backend.symbolByName.Entity, triple[0]], true);
+  backend.setTriple([symbol, backend.symbolByName.Attribute, triple[1]], true);
+  backend.setTriple([symbol, backend.symbolByName.Value, triple[2]], true);
 }
 
 /**
  * Creates a symbol with associated data.
  * But only if there is no such symbol already
  * @param {Backend} backend
- * @param writer
  * @param {Symbol} ns
  * @param {Symbol} attribute tripple attribute
  * @param {Symbol} value tripple value
@@ -23,7 +22,6 @@ export function setMetaTriple(symbol, triple, writer) {
  */
 export function registerDataSymbol(
   backend,
-  writer,
   ns,
   attribute,
   value,
@@ -33,9 +31,9 @@ export function registerDataSymbol(
   let s = hasVMMData(backend, attribute, value, data);
 
   if (s === undefined) {
-    s = writer.createSymbol(ns);
-    writer.setData(s, data);
-    writer.setTriple([s, attribute, value], true);
+    s = backend.createSymbol(ns);
+    backend.setData(s, data);
+    backend.setTriple([s, attribute, value], true);
 
     //console.log("create",s, attribute, value, data);
 
@@ -45,7 +43,13 @@ export function registerDataSymbol(
   return s;
 }
 
-export function createOntology(backend, writer, ns, ontologyDefintion) {
+/**
+ * 
+ * @param {Backend} backend
+ * @param ns 
+ * @param ontologyDefintion 
+ */
+export function createOntology(backend, ns, ontologyDefintion) {
   const symbolNames = new Set([
     "ontology",
     "has",
@@ -63,17 +67,17 @@ export function createOntology(backend, writer, ns, ontologyDefintion) {
 
   //console.log(symbolNames);
 
-  writer.registerSymbolsInNamespace(ns, [...symbolNames]);
+  backend.registerSymbolsInNamespace(ns, [...symbolNames]);
 
-  const o = writer.symbolByName;
+  const o = backend.symbolByName;
 
   for (const a of attributes(ontologyDefintion)) {
     for (const ma of attributes(metaOntology)) {
       const data = a[ma.name];
       if (ma.type !== undefined && data !== undefined) {
-        registerDataSymbol(backend, writer, ns, o.isa, o[ma.name], data, s => {
+        registerDataSymbol(backend, ns, o.isa, o[ma.name], data, s => {
           console.log("set", a.name, ma.name, data);
-          writer.setTriple([o[a.name], o.has, s], true);
+          backend.setTriple([o[a.name], o.has, s], true);
         });
       }
     }
@@ -83,7 +87,7 @@ export function createOntology(backend, writer, ns, ontologyDefintion) {
 }
 
 export function hasVMMData(backend, a, v, data) {
-  for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
+  for (const x of backend.queryTriples(backend.queryMasks.VMM, [
     backend.symbolByName.Void,
     a,
     v

@@ -4,7 +4,6 @@ import {
   loaded,
   Diff,
   SymbolInternals,
-  BasicBackend,
   RustWasmBackend
 } from "SymatemJS";
 import { createOntology, registerDataSymbol, hasVMMData } from "./src/util.mjs";
@@ -21,13 +20,13 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   backend.initPredefinedSymbols();
 
   const repositoryNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+    backend.createSymbol(backend.metaNamespaceIdentity)
   );
   const modalNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+    backend.createSymbol(backend.metaNamespaceIdentity)
   );
   const recordingNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(BasicBackend.metaNamespaceIdentity)
+    backend.createSymbol(backend.metaNamespaceIdentity)
   );
 
   try {
@@ -43,7 +42,6 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   );
 
   const ontology = createOntology(
-    backend,
     writer,
     recordingNamespace,
     zoneOntologyDef
@@ -55,7 +53,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
     })
   );
 
-  readZone(data.records, backend, writer, ontology, recordingNamespace);
+  readZone(data.records, writer, ontology, recordingNamespace);
 
   writer.compressData();
   writer.commit();
@@ -87,7 +85,7 @@ function writeZone(backend, ontology) {
   }
 }
 
-function readZone(records, backend, writer, o, ns) {
+function readZone(records, backend, o, ns) {
   let z;
 
   records
@@ -99,15 +97,14 @@ function readZone(records, backend, writer, o, ns) {
       }
 
       if (!z) {
-        z = writer.createSymbol(ns);
-        writer.setTriple([z, o.isa, o.zone], true);
+        z = backend.createSymbol(ns);
+        backend.setTriple([z, o.isa, o.zone], true);
       }
 
-      const r = writer.createSymbol(ns);
+      const r = backend.createSymbol(ns);
 
       const a = registerDataSymbol(
         backend,
-        writer,
         ns,
         o.isa,
         o.ipv4,
@@ -115,7 +112,6 @@ function readZone(records, backend, writer, o, ns) {
       );
       const n = registerDataSymbol(
         backend,
-        writer,
         ns,
         o.isa,
         o.name,
@@ -123,19 +119,18 @@ function readZone(records, backend, writer, o, ns) {
       );
       const t = registerDataSymbol(
         backend,
-        writer,
         ns,
         o.isa,
         o.ttl,
         parseInt(record.ttl, 10)
       );
 
-      writer.setTriple([z, o.has, r], true);
-      writer.setTriple([r, o.isa, o.record], true);
-      writer.setTriple([r, o.has, t], true);
-      writer.setTriple([r, o.has, n], true);
-      writer.setTriple([r, o.has, a], true);
-      writer.setTriple([a, o.has, n], true);
+      backend.setTriple([z, o.has, r], true);
+      backend.setTriple([r, o.isa, o.record], true);
+      backend.setTriple([r, o.has, t], true);
+      backend.setTriple([r, o.has, n], true);
+      backend.setTriple([r, o.has, a], true);
+      backend.setTriple([a, o.has, n], true);
     });
 }
 
