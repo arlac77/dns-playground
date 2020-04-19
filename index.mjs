@@ -88,15 +88,19 @@ function writeZone(backend, ontology) {
 }
 
 function readZone(records, backend, writer, o, ns) {
-  const z = writer.createSymbol(ns);
-  writer.setTriple([z, o.isa, o.zone], true);
+  let z;
+
   records
     .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
-      
       if (hasVMMData(backend, o.isa, o.name, record.name)) {
         console.log("skip", record.name);
         return;
+      }
+
+      if (!z) {
+        z = writer.createSymbol(ns);
+        writer.setTriple([z, o.isa, o.zone], true);
       }
 
       const r = writer.createSymbol(ns);
@@ -108,7 +112,6 @@ function readZone(records, backend, writer, o, ns) {
         o.isa,
         o.ipv4,
         dotted2Number(record.content)
-        // s => console.log("create", number2Dotted(writer.getData(s)))
       );
       const n = registerDataSymbol(
         backend,
@@ -117,7 +120,6 @@ function readZone(records, backend, writer, o, ns) {
         o.isa,
         o.name,
         record.name
-        // s => console.log("create", writer.getData(s))
       );
       const t = registerDataSymbol(
         backend,
@@ -126,17 +128,14 @@ function readZone(records, backend, writer, o, ns) {
         o.isa,
         o.ttl,
         parseInt(record.ttl, 10)
-        // s => console.log("create", writer.getData(s))
       );
 
-      
       writer.setTriple([z, o.has, r], true);
       writer.setTriple([r, o.isa, o.record], true);
       writer.setTriple([r, o.has, t], true);
       writer.setTriple([r, o.has, n], true);
       writer.setTriple([r, o.has, a], true);
       writer.setTriple([a, o.has, n], true);
-      
     });
 }
 
