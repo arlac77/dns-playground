@@ -10,5 +10,6 @@ dnt.title = (providedTitle = "dotted2Number & back", d) =>
   )}`.trim();
 
 test(dnt, "0.0.0.0");
+test(dnt, "127.0.0.1");
 test(dnt, "10.0.6.1");
 test(dnt, "255.255.255.255");

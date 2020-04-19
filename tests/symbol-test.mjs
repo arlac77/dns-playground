@@ -9,7 +9,7 @@ import {
 
 import { registerDataSymbol } from "../src/util.mjs";
 
-test("s1", async t => {
+async function prepareBackend() {
   await loaded;
 
   const backend = new RustWasmBackend();
@@ -30,6 +30,12 @@ test("s1", async t => {
     { [recordingNamespace]: modalNamespace },
     repositoryNamespace
   );
+
+  return { writer, backend, recordingNamespace };
+}
+
+test("s1", async t => {
+  const { backend, writer, recordingNamespace } = await prepareBackend();
 
   writer.registerSymbolsInNamespace(recordingNamespace, ["isa", "something"]);
 
