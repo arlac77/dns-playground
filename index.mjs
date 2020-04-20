@@ -4,7 +4,8 @@ import {
   loaded,
   Diff,
   SymbolInternals,
-  RustWasmBackend
+  RustWasmBackend,
+  RelocationTable
 } from "SymatemJS";
 import { createOntology, registerDataSymbol, hasVMMData } from "./src/util.mjs";
 import { dotted2Number, number2Dotted } from "./src/ip-util.mjs";
@@ -35,10 +36,13 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
     );
   } catch (e) {}
 
+  const rt = RelocationTable.create();
+  RelocationTable.set(rt,recordingNamespace,modalNamespace);
+
   const writer = new Diff(
     backend,
-    { [recordingNamespace]: modalNamespace },
-    repositoryNamespace
+    repositoryNamespace,
+    rt
   );
 
   const ontology = createOntology(

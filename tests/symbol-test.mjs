@@ -3,6 +3,7 @@ import {
   loaded,
   Diff,
   SymbolInternals,
+  RelocationTable,
   RustWasmBackend
 } from "SymatemJS";
 
@@ -24,11 +25,14 @@ async function prepareBackend() {
   const recordingNamespace = SymbolInternals.identityOfSymbol(
     backend.createSymbol(backend.metaNamespaceIdentity)
   );
+ 
+  const rt = RelocationTable.create();
+  RelocationTable.set(rt,recordingNamespace,modalNamespace);
 
   const writer = new Diff(
     backend,
-    { [recordingNamespace]: modalNamespace },
-    repositoryNamespace
+    repositoryNamespace,
+    rt
   );
 
   return { writer, backend, recordingNamespace };
