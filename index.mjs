@@ -37,19 +37,11 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   } catch (e) {}
 
   const rt = RelocationTable.create();
-  RelocationTable.set(rt,recordingNamespace,modalNamespace);
+  RelocationTable.set(rt, recordingNamespace, modalNamespace);
 
-  const writer = new Diff(
-    backend,
-    repositoryNamespace,
-    rt
-  );
+  const writer = new Diff(backend, repositoryNamespace, rt);
 
-  const ontology = createOntology(
-    writer,
-    recordingNamespace,
-    zoneOntologyDef
-  );
+  const ontology = createOntology(writer, recordingNamespace, zoneOntologyDef);
 
   const data = dnsz.parse(
     await fs.promises.readFile(zoneFile, {
@@ -62,7 +54,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   writer.compressData();
   writer.commit();
 
-  //writeZone(backend, ontology);
+  writeZone(backend, ontology);
 
   await fs.promises.writeFile(
     dumpFileName,
@@ -72,20 +64,43 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
 }
 
 function writeZone(backend, ontology) {
-  for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
+  for (const rt of backend.queryTriples(backend.queryMasks.VMM, [
     backend.symbolByName.Void,
     ontology.isa,
-    ontology.name
+    ontology.record
   ])) {
-    console.log(backend.getData(x[0]));
-  }
+    const rs = rt[0];
 
-  for (const x of backend.queryTriples(backend.constructor.queryMasks.VMM, [
-    backend.symbolByName.Void,
-    ontology.isa,
-    ontology.ipv4
-  ])) {
-    console.log(number2Dotted(backend.getData(x[0])));
+    const record = {};
+
+    for (const n of backend.queryTriples(backend.queryMasks.MMV, [
+      rs,
+      ontology.has,
+      backend.symbolByName.Void
+    ])) {
+      const attribute = n[2];
+
+      for (const at of backend.queryTriples(backend.queryMasks.MMV, [
+        attribute,
+        ontology.isa,
+        backend.symbolByName.Void
+      ])) {
+        const as = at[2];
+
+        switch (as) {
+          case ontology.ipv4:
+            record[backend.getData(as)] = number2Dotted(
+              backend.getData(attribute)
+            );
+            break;
+          default:
+            record[backend.getData(as)] = backend.getData(attribute);
+        }
+        break;
+      }
+    }
+
+    console.log(record);
   }
 }
 
@@ -96,7 +111,7 @@ function readZone(records, backend, o, ns) {
     .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
       if (hasVMMData(backend, o.isa, o.name, record.name)) {
-        console.log("skip", record.name);
+        //console.log("skip", record.name);
         return;
       }
 
@@ -114,13 +129,7 @@ function readZone(records, backend, o, ns) {
         o.ipv4,
         dotted2Number(record.content)
       );
-      const n = registerDataSymbol(
-        backend,
-        ns,
-        o.isa,
-        o.name,
-        record.name
-      );
+      const n = registerDataSymbol(backend, ns, o.isa, o.name, record.name);
       const t = registerDataSymbol(
         backend,
         ns,
