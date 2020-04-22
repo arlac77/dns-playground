@@ -54,7 +54,13 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   writer.compressData();
   writer.commit();
 
-  writeZone(backend, ontology);
+  for (const zt of backend.queryTriples(backend.queryMasks.VMM, [
+    backend.symbolByName.Void,
+    ontology.isa,
+    ontology.zone
+  ])) {
+    writeZone(backend, ontology, zt[0]);
+  }
 
   await fs.promises.writeFile(
     dumpFileName,
@@ -63,13 +69,16 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   );
 }
 
-function writeZone(backend, ontology) {
-  for (const rt of backend.queryTriples(backend.queryMasks.VMM, [
-    backend.symbolByName.Void,
-    ontology.isa,
-    ontology.record
+function writeZone(backend, ontology, zone) {
+  console.log('Write zone', zone);
+  for (const rt of backend.queryTriples(backend.queryMasks.MMV, [
+    zone,
+    ontology.has,
+    backend.symbolByName.Void
   ])) {
-    const rs = rt[0];
+    //console.log("query zone 'has' tuple", rt);
+
+    const rs = rt[2];
 
     const record = {};
 
@@ -107,6 +116,14 @@ function writeZone(backend, ontology) {
 function readZone(records, backend, o, ns) {
   let z;
 
+  /*
+  records
+  .filter(record => record.type === "SOA" && record.name === "@")
+  .forEach(record => {
+    console.log(JSON.stringify(record,undefined,2));
+  });
+*/
+
   records
     .filter(record => record.type === "A" && record.name !== "@")
     .forEach(record => {
@@ -118,9 +135,14 @@ function readZone(records, backend, o, ns) {
       if (!z) {
         z = backend.createSymbol(ns);
         backend.setTriple([z, o.isa, o.zone], true);
+        //console.log('Create zone', z);
       }
 
       const r = backend.createSymbol(ns);
+      backend.setTriple([r, o.isa, o.record], true);
+      backend.setTriple([z, o.has, r], true);
+
+      //console.log("Create zone 'has' tuple", [z, o.has, r]);
 
       const a = registerDataSymbol(
         backend,
@@ -129,7 +151,12 @@ function readZone(records, backend, o, ns) {
         o.ipv4,
         dotted2Number(record.content)
       );
+      backend.setTriple([r, o.has, a], true);
+
       const n = registerDataSymbol(backend, ns, o.isa, o.name, record.name);
+      backend.setTriple([r, o.has, n], true);
+      backend.setTriple([a, o.has, n], true);
+
       const t = registerDataSymbol(
         backend,
         ns,
@@ -137,13 +164,7 @@ function readZone(records, backend, o, ns) {
         o.ttl,
         parseInt(record.ttl, 10)
       );
-
-      backend.setTriple([z, o.has, r], true);
-      backend.setTriple([r, o.isa, o.record], true);
       backend.setTriple([r, o.has, t], true);
-      backend.setTriple([r, o.has, n], true);
-      backend.setTriple([r, o.has, a], true);
-      backend.setTriple([a, o.has, n], true);
     });
 }
 
