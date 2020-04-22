@@ -2,11 +2,11 @@ export const zoneOntologyDef = {
     attributes: {
       networkInterface: {
         attributes: {
-          name: {},
-          type: {},
+          characterString: {},
+          name: { isa: "characterString" },
           macAddress: {},
           ipv4: {
-            type: "BinaryNumber",
+            isa: "BinaryNumber",
             description: "ip-v4 address as 32 bit integer",
             minOccurs: 0,
             maxOccurs: 1024
@@ -25,7 +25,7 @@ export const zoneOntologyDef = {
               },
               ttl: {
                 description: "time to live in seconds",
-                type: "BinaryNumber",
+                isa: "BinaryNumber",
                 minValue: 1,
                 maxValue: 2147483647,
                 minOccurs: 0,
@@ -39,13 +39,14 @@ export const zoneOntologyDef = {
                 description: "a host address",
                 attributes: {
                   ipv4: {
-                    type: "BinaryNumber",
+                    isa: "BinaryNumber",
                     description: "ip-v4 address as 32 bit integer"
                   }
                 }
               },
               CNAME: {
                 description: "the canonical name for an alias",
+                isa: "name",
                 attributes: {
                   alias: {}
                 }

@@ -7,7 +7,8 @@ import {
   RustWasmBackend,
   RelocationTable
 } from "SymatemJS";
-import { createOntology, registerDataSymbol, hasVMMData } from "./src/util.mjs";
+import { createOntology } from "./src/ontology.mjs";
+import { registerDataSymbol, hasVMMData } from "./src/util.mjs";
 import { dotted2Number, number2Dotted } from "./src/ip-util.mjs";
 import { zoneOntologyDef } from "./src/zone.mjs";
 

@@ -1,49 +1,14 @@
 import test from "ava";
-import {
-  loaded,
-  Diff,
-  SymbolInternals,
-  RelocationTable,
-  RustWasmBackend
-} from "SymatemJS";
+import { prepareBackend } from "./helpers/util.mjs";
 
 import { registerDataSymbol } from "../src/util.mjs";
 
-async function prepareBackend() {
-  await loaded;
-
-  const backend = new RustWasmBackend();
-
-  backend.initPredefinedSymbols();
-
-  const repositoryNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(backend.metaNamespaceIdentity)
-  );
-  const modalNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(backend.metaNamespaceIdentity)
-  );
-  const recordingNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(backend.metaNamespaceIdentity)
-  );
- 
-  const rt = RelocationTable.create();
-  RelocationTable.set(rt,recordingNamespace,modalNamespace);
-
-  const writer = new Diff(
-    backend,
-    repositoryNamespace,
-    rt
-  );
-
-  return { writer, backend, recordingNamespace };
-}
-
-test("s1", async t => {
+test("registerDataSymbol", async t => {
   const { writer, recordingNamespace } = await prepareBackend();
 
   writer.registerSymbolsInNamespace(recordingNamespace, ["isa", "something"]);
 
-  const s = registerDataSymbol(
+  const registeredSymbol = registerDataSymbol(
     writer,
     recordingNamespace,
     writer.symbolByName.isa,
@@ -52,5 +17,18 @@ test("s1", async t => {
     s => {}
   );
 
-  t.truthy(s);
+  t.truthy(registeredSymbol);
+
+  let queriedSymbol;
+
+  for (const x of writer.queryTriples(writer.queryMasks.VMM, [
+    writer.symbolByName.Void,
+    writer.symbolByName.isa,
+    writer.symbolByName.something
+  ])) {
+    queriedSymbol = x[0];
+  }
+
+  t.is(registeredSymbol, queriedSymbol);
+  t.is(writer.getData(registeredSymbol), "the data");
 });
