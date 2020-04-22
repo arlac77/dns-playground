@@ -53,8 +53,7 @@ export function createOntology(backend, ns, ontologyDefintion) {
   const symbolNames = new Set([
     "ontology",
     "has",
-    "isa",
-    ...Object.keys(metaOntology.physicalUnits)
+    "isa"
   ]);
 
   for (const a of attributes(metaOntology)) {
@@ -126,11 +125,14 @@ function* attributes(owner) {
 }
 
 const metaOntology = {
+  entities: {
+    physicalUnit: {},
+    Second: { isa: "physicalUnit" }
+  },
   attributes: {
     choice: {},
     attributes: { minOccurs: 0, maxOccurs: 1 },
     description: { type: "UTF8" },
-    physicalUnit: {},
     minValue: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     maxValue: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
     minOccurs: { type: "BinaryNumber", minOccurs: 0, maxOccurs: 1 },
@@ -147,8 +149,5 @@ const metaOntology = {
       maxOccurs: 1,
       minValue: 0
     }
-  },
-  physicalUnits: {
-    Second: {}
   }
 };
