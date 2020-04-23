@@ -1,0 +1,22 @@
+digraph ontology {
+	rankdir=LR;
+	node [shape = circle];
+
+    name -> "string" [ label = "isa" ];
+    "ipv4 address"-> address [ label = "isa" ];
+    "dns name" -> name [ label = "isa" ];
+
+
+    zone -> "zone entry" [ label = "has" ];
+
+
+    "AAA" -> "zone entry" [ label = "isa" ];
+    "A" -> "zone entry" [ label = "isa" ];
+    "A" -> "ipv4 address" [ label = "has" ];
+
+    "MX" -> "zone entry" [ label = "isa" ];
+    "MX" -> "dns name" [ label = "has" ];
+
+    "CNAME" -> "zone entry" [ label = "isa" ];
+    "CNAME" -> "dns name" [ label = "has" ];
+}
