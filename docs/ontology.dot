@@ -3,20 +3,49 @@ digraph ontology {
 	node [shape = circle];
 
     name -> "string" [ label = "isa" ];
-    "ipv4 address"-> address [ label = "isa" ];
-    "dns name" -> name [ label = "isa" ];
+    number;
+    address;
+    uint32 -> number [ label = "isa" ];
+    uint128 -> number [ label = "isa" ];
+    int32 -> number [ label = "isa" ];
+    numericalAddress -> number [ label = "isa" ];
+    numericalAddress -> address [ label = "isa" ];
+    "ipv4 address"-> numericalAddress [ label = "isa" ];
+    "ipv4 address"-> uint32 [ label = "isa" ];
+    "ipv6 address"-> numericalAddress [ label = "isa" ];
+    "ipv6 address"-> uint128 [ label = "isa" ];
+    domainName -> name [ label = "isa" ];
+
+    zone -> "zone record" [ label = "has" ];
 
 
-    zone -> "zone entry" [ label = "has" ];
+    "A"     -> "zone record" [ label = "isa" ];
+    "A"     -> 1; [ label = "isIdentifiedBy" ];
+    "A"     -> "ipv4 address" [ label = "has" ];
+    "CNAME" -> "zone record" [ label = "isa" ];
+    "CNAME" -> 5; [ label = "isIdentifiedBy" ];
+    "CNAME" -> domainName [ label = "has" ];
+    "SOA"   -> "zone record" [ label = "isa" ];
+    "SOA"   -> 6; [ label = "isIdentifiedBy" ];
+    "SOA"   -> "ipv4 address" [ label = "has" ];
+    "SOA"   -> MNAME [ label = "has" ];
+    "SOA"   -> RNAME [ label = "has" ];
+    "SOA"   -> SERIAL [ label = "has" ];
+    "SOA"   -> REFRESH [ label = "has" ];
+    "SOA"   -> RETRY [ label = "has" ];
+    "SOA"   -> EXPIRE [ label = "has" ];
 
+    MNAME   -> domainName [ label = "isa" ];
+    RNAME   -> domainName [ label = "isa" ];
+    SERIAL  -> uint32 [ label = "isa" ];
+    REFRESH -> int32 [ label = "isa" ];
+    RETRY   -> int32 [ label = "isa" ];
+    EXPIRE  -> int32 [ label = "isa" ];
 
-    "AAA" -> "zone entry" [ label = "isa" ];
-    "A" -> "zone entry" [ label = "isa" ];
-    "A" -> "ipv4 address" [ label = "has" ];
-
-    "MX" -> "zone entry" [ label = "isa" ];
-    "MX" -> "dns name" [ label = "has" ];
-
-    "CNAME" -> "zone entry" [ label = "isa" ];
-    "CNAME" -> "dns name" [ label = "has" ];
+    "MX"    -> "zone record" [ label = "isa" ];
+    "MX"    -> 15; [ label = "isIdentifiedBy" ];
+    "MX"    -> domainName [ label = "has" ];
+    "AAA"   -> "zone record" [ label = "isa" ];
+    "AAA"   -> 28; [ label = "isIdentifiedBy" ];
+    "AAA"   -> "ipv6 address" [ label = "has" ];
 }
