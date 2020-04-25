@@ -20,14 +20,13 @@ digraph ontology {
 
 
     "A"     -> "zone record" [ label = "isa" ];
-    "A"     -> 1; [ label = "isIdentifiedBy" ];
+    "A"     -> 1 [ label = "isIdentifiedBy" ];
     "A"     -> "ipv4 address" [ label = "has" ];
     "CNAME" -> "zone record" [ label = "isa" ];
-    "CNAME" -> 5; [ label = "isIdentifiedBy" ];
+    "CNAME" -> 5 [ label = "isIdentifiedBy" ];
     "CNAME" -> domainName [ label = "has" ];
     "SOA"   -> "zone record" [ label = "isa" ];
-    "SOA"   -> 6; [ label = "isIdentifiedBy" ];
-    "SOA"   -> "ipv4 address" [ label = "has" ];
+    "SOA"   -> 6 [ label = "isIdentifiedBy" ];
     "SOA"   -> MNAME [ label = "has" ];
     "SOA"   -> RNAME [ label = "has" ];
     "SOA"   -> SERIAL [ label = "has" ];
@@ -43,9 +42,9 @@ digraph ontology {
     EXPIRE  -> int32 [ label = "isa" ];
 
     "MX"    -> "zone record" [ label = "isa" ];
-    "MX"    -> 15; [ label = "isIdentifiedBy" ];
+    "MX"    -> 15 [ label = "isIdentifiedBy" ];
     "MX"    -> domainName [ label = "has" ];
     "AAA"   -> "zone record" [ label = "isa" ];
-    "AAA"   -> 28; [ label = "isIdentifiedBy" ];
+    "AAA"   -> 28 [ label = "isIdentifiedBy" ];
     "AAA"   -> "ipv6 address" [ label = "has" ];
 }
