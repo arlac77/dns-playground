@@ -20,14 +20,7 @@ export function setMetaTriple(symbol, triple, backend) {
  * @param {any} data associated to the entity symbol
  * @param cb called only when symbol was not already present
  */
-export function registerDataSymbol(
-  backend,
-  ns,
-  attribute,
-  value,
-  data,
-  cb
-) {
+export function registerDataSymbol(backend, ns, attribute, value, data, cb) {
   let s = hasVMMData(backend, attribute, value, data);
 
   if (s === undefined) {
@@ -42,7 +35,6 @@ export function registerDataSymbol(
 
   return s;
 }
-
 
 export function hasVMMData(backend, a, v, data) {
   for (const x of backend.queryTriples(backend.queryMasks.VMM, [
@@ -63,4 +55,20 @@ export function hasVMMData(backend, a, v, data) {
   }
 
   return undefined;
+}
+
+export function* traverse(backend, current, attributeSymbol) {
+  for (; current; ) {
+    for (const x of backend.queryTriples(backend.queryMasks.MMV, [
+      current,
+      attributeSymbol,
+      backend.symbolByName.Void
+    ])) {
+      current = x[2];
+      yield current;
+      break;
+    }
+
+    console.log(current);
+  }
 }
