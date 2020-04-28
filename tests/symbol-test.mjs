@@ -53,5 +53,9 @@ test.only("traverse", async t => {
   let i = 1;
   for (const p of traverse(writer, path[0], attribute)) {
     t.is(p, path[i], `traverse[${i}]`);
+
+    i++;
   }
+
+  t.is(i,10);
 });
