@@ -57,18 +57,28 @@ export function hasVMMData(backend, a, v, data) {
   return undefined;
 }
 
-export function* traverse(backend, current, attributeSymbol) {
+/**
+ * [S1,P,O1]
+ * [O1,P,O2]
+ * @param backend 
+ * @param qt 
+ * @param direction 
+ */
+export function* traverse(
+  backend,
+  qt,
+  direction = backend.queryMasks.MMV
+) {
   let found;
 
   do {
     found = false;
-    for (const r of backend.queryTriples(backend.queryMasks.MMV, [
-      current,
-      attributeSymbol,
-      backend.symbolByName.Void
-    ])) {
-      current = r[2];
-      yield current;
+    for (const r of backend.queryTriples(direction, qt)) {
+      switch(direction) {
+        case backend.queryMasks.MMV:
+          yield qt[0] = r[2];
+        break;
+      }
       found = true;
       break;
     }
