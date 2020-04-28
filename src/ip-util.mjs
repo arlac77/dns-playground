@@ -7,7 +7,7 @@ export function number2Dotted(x) {
 }
 
 export function ipv62Number(x) {
-  return x.split(":").reduce((a, c) => a * 256n * 256n + BigInt(parseInt(c, 16)), 0n);
+  return x.split(":").reduce((a, c) => a * 65536n + BigInt(parseInt(c, 16)), 0n);
 }
 
 export function number2ipv6(x) {

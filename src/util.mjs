@@ -67,12 +67,10 @@ export function* traverse(backend, current, attributeSymbol) {
       attributeSymbol,
       backend.symbolByName.Void
     ])) {
-      console.log(r);
       current = r[2];
       yield current;
       found = true;
       break;
     }
-    // console.log(current);
   } while (found);
 }
