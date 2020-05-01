@@ -60,27 +60,67 @@ export function hasVMMData(backend, a, v, data) {
 /**
  * [S1,P,O1]
  * [O1,P,O2]
- * @param backend 
- * @param qt 
- * @param direction 
+ * @param backend
+ * @param qt
+ * @param direction
  */
-export function* traverse(
-  backend,
-  qt,
-  direction = backend.queryMasks.MMV
-) {
+export function* traverse(backend, qt, direction = backend.queryMasks.MMV) {
   let found;
 
   do {
     found = false;
     for (const r of backend.queryTriples(direction, qt)) {
-      switch(direction) {
+      switch (direction) {
         case backend.queryMasks.MMV:
-          yield qt[0] = r[2];
-        break;
+          yield (qt[0] = r[2]);
+          break;
       }
       found = true;
       break;
     }
   } while (found);
+}
+
+const _variables = {};
+export function DeclareVariable(name) {
+  let v = _variables[name];
+  if (!v) {
+    v = _variables[name] = Symbol(name);
+  }
+
+  return v;
+}
+
+export function* tripleQueries(backend, tripleQueries = []) {
+  const types2Mask = {
+    "symbol:string:string": backend.queryMasks.VMM,
+    "string:string:symbol": backend.queryMasks.MMV,
+    "symbol:string:symbol": backend.queryMasks.VMV,
+    "symbol:symbol:symbol": backend.queryMasks.VVV
+  };
+
+  const results = new Map();
+
+  for (let tripleQuery of tripleQueries) {
+    tripleQuery
+      .filter(s => typeof s === "symbol" && !results.get(s))
+      .forEach(s => results.set(s, []));
+
+    const mask = types2Mask[tripleQuery.map(s => typeof s).join(":")];
+    //console.log(tripleQuery);
+
+    const query = tripleQuery.map(s =>
+      typeof s === "symbol" ? backend.symbolByName.Void : s
+    );
+
+    for (const r of backend.queryTriples(mask, query)) {
+      tripleQuery.forEach((s, i) => {
+        if (typeof s === "symbol") {
+          results.get(s).push(r[i]);
+        }
+      });
+    }
+  }
+
+  yield results;
 }
