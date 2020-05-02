@@ -5,7 +5,8 @@
   "type": "module",
   "main": "{{module}}",
   "exports": {
-    ".": "./{{module}}"
+    ".": "./{{module}}",
+    "./": "./"
   },
   "description": "playing around with dns & Symatem",
   "license": "BSD-2-Clause",
