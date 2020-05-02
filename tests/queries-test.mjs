@@ -14,6 +14,7 @@ test.only("tripleQueries", async t => {
 
   writer.setTriple([s1, a1, s2], true);
   writer.setTriple([s2, a2, s3], true);
+  //writer.setTriple([s1, a2, s3], true);
 
   for (const p of tripleQueries(writer, [
     [s1, a1, DeclareVariable("A")],

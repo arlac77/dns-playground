@@ -109,13 +109,18 @@ export function* tripleQueries(backend, tripleQueries = []) {
     const mask = types2Mask[tripleQuery.map(s => typeof s).join(":")];
     //console.log(tripleQuery);
 
-    const query = tripleQuery.map(s =>
-      typeof s === "symbol" ? backend.symbolByName.Void : s
+    const query = tripleQuery.map(s => {
+      if(typeof s === "symbol") {
+        const value = results.get(s);
+        return value.length ? value[0] : backend.symbolByName.Void; }
+      return s;}
     );
 
+    console.log(mask, query);
+    
     for (const r of backend.queryTriples(mask, query)) {
       tripleQuery.forEach((s, i) => {
-        if (typeof s === "symbol") {
+        if (typeof s === "symbol" && query[i] === backend.symbolByName.Void) {
           results.get(s).push(r[i]);
         }
       });
