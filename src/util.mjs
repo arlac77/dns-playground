@@ -57,29 +57,6 @@ export function hasVMMData(backend, a, v, data) {
   return undefined;
 }
 
-/**
- * [S1,P,O1]
- * [O1,P,O2]
- * @param backend
- * @param qt
- * @param direction
- */
-export function* traverse(backend, qt, direction = backend.queryMasks.MMV) {
-  let found;
-
-  do {
-    found = false;
-    for (const r of backend.queryTriples(direction, qt)) {
-      switch (direction) {
-        case backend.queryMasks.MMV:
-          yield (qt[0] = r[2]);
-          break;
-      }
-      found = true;
-      break;
-    }
-  } while (found);
-}
 
 const _variables = {};
 export function DeclareVariable(name) {
