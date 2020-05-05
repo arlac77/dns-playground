@@ -7,6 +7,8 @@ import {
   RustWasmBackend,
   RelocationTable
 } from "SymatemJS";
+import { SymatemQueryMixin } from "SymatemQuery";
+
 import { createOntology } from "./src/ontology.mjs";
 import { registerDataSymbol, hasVMMData } from "./src/util.mjs";
 import { dotted2Number, number2Dotted } from "./src/ip-util.mjs";
@@ -17,7 +19,8 @@ const defaultEncoding = { encoding: "utf8" };
 async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   await loaded;
 
-  const backend = new RustWasmBackend();
+  const BackendClass = SymatemQueryMixin(RustWasmBackend);
+  const backend = new BackendClass();
 
   backend.initPredefinedSymbols();
 
