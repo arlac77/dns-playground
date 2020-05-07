@@ -1,7 +1,6 @@
 import fs from "fs";
 import dnsz from "dnsz";
 import {
-  loaded,
   Diff,
   SymbolInternals,
   RustWasmBackend,
@@ -17,10 +16,8 @@ import { zoneOntologyDef } from "./src/zone.mjs";
 const defaultEncoding = { encoding: "utf8" };
 
 async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
-  await loaded;
-
   const BackendClass = SymatemQueryMixin(RustWasmBackend);
-  const backend = new BackendClass();
+  const backend = await new BackendClass();
 
   backend.initPredefinedSymbols();
 
