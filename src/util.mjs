@@ -56,14 +56,3 @@ export function hasVMMData(backend, a, v, data) {
 
   return undefined;
 }
-
-
-const _variables = {};
-export function DeclareVariable(name) {
-  let v = _variables[name];
-  if (!v) {
-    v = _variables[name] = Symbol(name);
-  }
-
-  return v;
-}

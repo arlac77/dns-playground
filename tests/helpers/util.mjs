@@ -1,15 +1,12 @@
 import {
-    loaded,
     Diff,
     SymbolInternals,
     RelocationTable,
     RustWasmBackend
   } from "SymatemJS";
   
-export async function prepareBackend() {
-    await loaded;
-  
-    const backend = new RustWasmBackend();
+export async function prepareBackend() {  
+    const backend = await new RustWasmBackend();
   
     backend.initPredefinedSymbols();
   
