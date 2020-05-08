@@ -7,9 +7,7 @@ import {
   
 export async function prepareBackend() {  
     const backend = await new RustWasmBackend();
-  
-    backend.initPredefinedSymbols();
-  
+    
     const repositoryNamespace = SymbolInternals.identityOfSymbol(
       backend.createSymbol(backend.metaNamespaceIdentity)
     );
