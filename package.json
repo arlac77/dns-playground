@@ -17,8 +17,8 @@
     "lint": "documentation lint ./index.mjs"
   },
   "dependencies": {
+    "@symatem/query": "^3.0.0",
     "SymatemJS": "git+https://github.com/Symatem/SymatemJS.git",
-    "SymatemQuery": "git+https://github.com/arlac77/SymatemQuery.git",
     "dnsz": "^1.1.5"
   },
   "devDependencies": {
@@ -28,7 +28,7 @@
     "semantic-release": "^17.0.7"
   },
   "engines": {
-    "node": ">=14.1.0"
+    "node": ">=14.2.0"
   },
   "repository": {
     "type": "git",
