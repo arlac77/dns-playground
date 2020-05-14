@@ -6,7 +6,8 @@ import {
   RustWasmBackend,
   RelocationTable
 } from "SymatemJS";
-import { SymatemQueryMixin } from "SymatemQuery";
+import { SymatemQueryMixin } from "@symatem/query";
+import { SymatemOntologyMixin } from "@symatem/ontology";
 
 import { createOntology } from "./src/ontology.mjs";
 import { registerDataSymbol, hasVMMData } from "./src/util.mjs";
@@ -16,7 +17,7 @@ import { zoneOntologyDef } from "./src/zone.mjs";
 const defaultEncoding = { encoding: "utf8" };
 
 async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
-  const BackendClass = SymatemQueryMixin(RustWasmBackend);
+  const BackendClass = SymatemOntologyMixin(SymatemQueryMixin(RustWasmBackend));
   const backend = await new BackendClass();
 
   const repositoryNamespace = SymbolInternals.identityOfSymbol(

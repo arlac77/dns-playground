@@ -17,6 +17,7 @@
     "lint": "documentation lint ./index.mjs"
   },
   "dependencies": {
+    "@symatem/ontology": "git+https://github.com/arlac77/SymatemOntology.git",
     "@symatem/query": "^3.0.0",
     "SymatemJS": "git+https://github.com/Symatem/SymatemJS.git",
     "dnsz": "^1.1.5"
