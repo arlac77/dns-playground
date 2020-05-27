@@ -5,8 +5,7 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": {
-    ".": "./index.mjs",
-    "./": "./"
+    ".": "./index.mjs"
   },
   "description": "playing around with dns & Symatem",
   "license": "BSD-2-Clause",
