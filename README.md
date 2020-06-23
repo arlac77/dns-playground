@@ -20,12 +20,30 @@ playing around with dns & Symatem
 
 ### Table of Contents
 
--   [setMetaTriple](#setmetatriple)
+-   [createOntology](#createontology)
     -   [Parameters](#parameters)
--   [registerDataSymbol](#registerdatasymbol)
-    -   [Parameters](#parameters-1)
 -   [attributes](#attributes)
+    -   [Parameters](#parameters-1)
+-   [setMetaTriple](#setmetatriple)
     -   [Parameters](#parameters-2)
+-   [registerDataSymbol](#registerdatasymbol)
+    -   [Parameters](#parameters-3)
+
+## createOntology
+
+### Parameters
+
+-   `backend` **Backend** 
+-   `ns`  
+-   `ontologyDefintion`  
+
+## attributes
+
+iterate over all attributes
+
+### Parameters
+
+-   `owner`  root of the definition to traverse
 
 ## setMetaTriple
 
@@ -35,29 +53,21 @@ Links symbol to a triple
 
 -   `symbol` **[Symbol](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol)** 
 -   `triple` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Symbol](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol)>** 
--   `writer`  
+-   `backend` **Backend** 
 
 ## registerDataSymbol
 
-Creates a symbol with associated data
+Creates a symbol with associated data.
+But only if there is no such symbol already
 
 ### Parameters
 
--   `backend`  
--   `writer`  
--   `ns`  
--   `attribute`  tripple attribute
--   `value`  tripple value
--   `data`  associated to the entity symbol
+-   `backend` **Backend** 
+-   `ns` **[Symbol](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol)** 
+-   `attribute` **[Symbol](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol)** tripple attribute
+-   `value` **[Symbol](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol)** tripple value
+-   `data` **any** associated to the entity symbol
 -   `cb`  called only when symbol was not already present
-
-## attributes
-
-iterate over all attributes
-
-### Parameters
-
--   `owner`  root of the definition to traverse
 
 # install
 
