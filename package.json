@@ -19,7 +19,7 @@
     "@symatem/ontology": "git+https://github.com/arlac77/SymatemOntology.git",
     "@symatem/query": "^3.1.1",
     "SymatemJS": "git+https://github.com/Symatem/SymatemJS.git",
-    "dnsz": "^1.1.5"
+    "dnsz": "^1.1.6"
   },
   "devDependencies": {
     "ava": "^3.9.0",
@@ -28,7 +28,7 @@
     "semantic-release": "^17.1.1"
   },
   "engines": {
-    "node": ">=14.2.0"
+    "node": ">=14.4.0"
   },
   "repository": {
     "type": "git",
