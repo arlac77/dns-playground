@@ -4,7 +4,7 @@ import {
   Diff,
   SymbolInternals,
   RustWasmBackend,
-  RelocationTable
+  Repository
 } from "SymatemJS";
 import { SymatemQueryMixin } from "@symatem/query";
 import { SymatemOntologyMixin } from "@symatem/ontology";
@@ -23,9 +23,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   const repositoryNamespace = SymbolInternals.identityOfSymbol(
     backend.createSymbol(backend.metaNamespaceIdentity)
   );
-  const modalNamespace = SymbolInternals.identityOfSymbol(
-    backend.createSymbol(backend.metaNamespaceIdentity)
-  );
+
   const recordingNamespace = SymbolInternals.identityOfSymbol(
     backend.createSymbol(backend.metaNamespaceIdentity)
   );
@@ -36,10 +34,9 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
     );
   } catch (e) {}
 
-  const rt = RelocationTable.create();
-  RelocationTable.set(rt, recordingNamespace, modalNamespace);
 
-  const writer = new Diff(backend, repositoryNamespace, rt);
+  const repository = new Repository(backend, backend.createSymbol(repositoryNamespace));
+  const writer = new Diff(repository);
 
   const ontology = createOntology(writer, recordingNamespace, zoneOntologyDef);
 
