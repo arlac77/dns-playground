@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@symatem/ontology": "git+https://github.com/arlac77/SymatemOntology.git",
-    "@symatem/query": "^3.1.1",
+    "@symatem/query": "^3.1.2",
     "SymatemJS": "git+https://github.com/Symatem/SymatemJS.git",
     "dnsz": "^1.2.1"
   },
