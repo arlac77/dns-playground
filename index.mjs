@@ -1,11 +1,6 @@
-import fs from "fs";
+import { readFile, writeFile } from "fs/promises";
 import dnsz from "dnsz";
-import {
-  Diff,
-  SymbolInternals,
-  RustWasmBackend,
-  Repository
-} from "SymatemJS";
+import { Diff, SymbolInternals, RustWasmBackend, Repository } from "SymatemJS";
 import { SymatemQueryMixin } from "@symatem/query";
 import { SymatemOntologyMixin } from "@symatem/ontology";
 
@@ -29,19 +24,19 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
   );
 
   try {
-    backend.decodeJson(
-      await fs.promises.readFile(dumpFileName, defaultEncoding)
-    );
+    backend.decodeJson(await readFile(dumpFileName, defaultEncoding));
   } catch (e) {}
 
-
-  const repository = new Repository(backend, backend.createSymbol(repositoryNamespace));
+  const repository = new Repository(
+    backend,
+    backend.createSymbol(repositoryNamespace)
+  );
   const writer = new Diff(repository);
 
   const ontology = createOntology(writer, recordingNamespace, zoneOntologyDef);
 
   const data = dnsz.parse(
-    await fs.promises.readFile(zoneFile, {
+    await readFile(zoneFile, {
       encoding: "utf8"
     })
   );
@@ -59,7 +54,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
     writeZone(backend, ontology, zt[0]);
   }
 
-  await fs.promises.writeFile(
+  await writeFile(
     dumpFileName,
     backend.encodeJson([recordingNamespace]),
     defaultEncoding
@@ -67,7 +62,7 @@ async function doit(dumpFileName, zoneFile = "tests/fixtures/private.zone") {
 }
 
 function writeZone(backend, ontology, zone) {
-  console.log('Write zone', zone);
+  console.log("Write zone", zone);
   for (const rt of backend.queryTriples(backend.queryMasks.MMV, [
     zone,
     ontology.has,
