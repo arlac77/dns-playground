@@ -3,7 +3,7 @@ import {
     SymbolInternals,
     Repository,
     RustWasmBackend
-  } from "SymatemJS";
+  } from "@symatem/core";
   
 export async function prepareBackend() {  
     const backend = await new RustWasmBackend();

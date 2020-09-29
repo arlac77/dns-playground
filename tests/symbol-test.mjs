@@ -1,6 +1,5 @@
 import test from "ava";
 import { prepareBackend } from "./helpers/util.mjs";
-
 import { registerDataSymbol } from "../src/util.mjs";
 
 test("registerDataSymbol", async t => {

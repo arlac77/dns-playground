@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "fs/promises";
 import dnsz from "dnsz";
-import { Diff, SymbolInternals, RustWasmBackend, Repository } from "SymatemJS";
+import { Diff, SymbolInternals, RustWasmBackend, Repository } from "@symatem/core";
 import { SymatemQueryMixin } from "@symatem/query";
 import { SymatemOntologyMixin } from "@symatem/ontology";
 
