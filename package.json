@@ -18,10 +18,10 @@
     "lint:docs": "documentation lint ./index.mjs"
   },
   "dependencies": {
-    "@symatem/core": "git+https://github.com/Symatem/SymatemJS.git",
+    "@symatem/core": "^0.0.8",
     "@symatem/ontology": "git+https://github.com/arlac77/SymatemOntology.git",
-    "@symatem/query": "^3.1.2",
-    "dnsz": "^1.2.1"
+    "@symatem/query": "^3.1.11",
+    "dnsz": "^1.3.0"
   },
   "devDependencies": {
     "ava": "^3.13.0",
